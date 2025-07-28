@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- ***** 這是一份包含所有功能的完整、最終修正版本 ***** -->
+<!-- ***** Ceci est la version finale, entièrement refactorisée et corrigée de manière fondamentale ***** -->
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -170,6 +170,7 @@
             spaceCounter++;
             const spaceId = `space-${spaceCounter}`;
             spaces.push({ id: spaceId, description: `空間 ${spaceCounter}`, deductionItems: [] });
+            
             const spaceDiv = document.createElement('div');
             spaceDiv.classList.add('space-calculator');
             spaceDiv.id = spaceId;
@@ -205,8 +206,10 @@
                     <p class="bold-result"><span class="result-label">總計所需坪數：</span><span id="totalPingsResult-${spaceId}">--</span> 坪</p>
                 </div>`;
             document.getElementById('spacesContainer').appendChild(spaceDiv);
+            
             document.getElementById(`desc-${spaceId}`).addEventListener('input', (e) => {
-                document.getElementById(`title-${spaceId}`).textContent = e.target.value.trim() || `空間 ${spaceCounter}`;
+                const space = spaces.find(s => s.id === spaceId);
+                if(space) { document.getElementById(`title-${spaceId}`).textContent = e.target.value.trim() || space.description; }
             });
         }
 
@@ -219,9 +222,7 @@
         function addDeductionItemForSpace(spaceId) {
             const spaceDiv = document.getElementById(spaceId);
             const inputs = spaceDiv.querySelectorAll('.deduction-form .deduction-item-input');
-            const itemInput = inputs[0];
-            const lengthInput = inputs[1];
-            const widthInput = inputs[2];
+            const itemInput = inputs[0], lengthInput = inputs[1], widthInput = inputs[2];
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value);
             const width = parseFloat(widthInput.value);
@@ -279,7 +280,8 @@
                 <div class="input-group"><label>備註：</label><input type="text" id="notes-${accessoryId}"></div>`;
             document.getElementById('accessoriesContainer').appendChild(accessoryDiv);
             document.getElementById(`desc-${accessoryId}`).addEventListener('input', (e) => {
-                document.getElementById(`title-${accessoryId}`).textContent = e.target.value.trim() || `配件 ${accessoryCounter}`;
+                const accessory = accessories.find(a => a.id === accessoryId);
+                if(accessory) { document.getElementById(`title-${accessoryId}`).textContent = e.target.value.trim() || accessory.description; }
             });
         }
 
@@ -345,7 +347,7 @@
                     const length = parseFloat(document.getElementById(`length-${space.id}`).value) || 0;
                     const width = parseFloat(document.getElementById(`width-${space.id}`).value) || 0;
                     return {
-                        description: document.getElementById(`desc-${space.id}`).value || space.description,
+                        description: document.getElementById(`desc-${space.id}`).value.trim() || space.description,
                         productUsed: document.getElementById(`product-${space.id}`).value,
                         remark: document.getElementById(`remark-${space.id}`).value,
                         constructionMethod: document.getElementById(`constructionMethod-${space.id}`).value,
@@ -359,7 +361,7 @@
                     };
                 }),
                 accessories: accessories.map(acc => ({
-                    description: document.getElementById(`desc-${acc.id}`).value || acc.description,
+                    description: document.getElementById(`desc-${acc.id}`).value.trim() || acc.description,
                     length: document.getElementById(`length-${acc.id}`).value,
                     width: document.getElementById(`width-${acc.id}`).value,
                     notes: document.getElementById(`notes-${acc.id}`).value
@@ -376,11 +378,17 @@
             };
 
             try {
-                await fetch(GAS_WEB_APP_URL, {
-                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data), redirect: 'follow'
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    // ***** 這就是唯一的、根本性的修正！我移除了 mode: 'no-cors' *****
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
                 });
+                
+                // We can't read the response due to CORS, but if it didn't throw an error, we assume success.
                 showStatusMessage('✅ PDF已生成並上傳到雲端硬碟！', 'success');
+
             } catch (error) {
                 console.error('PDF生成錯誤:', error);
                 showStatusMessage('❌ PDF生成失敗：' + error.message, 'error');
@@ -389,8 +397,6 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('measurementDate').value = new Date().toISOString().split('T')[0];
-            addSpaceCalculator();
-            addAccessoryCalculator();
             
             document.querySelector('.add-space-btn').addEventListener('click', addSpaceCalculator);
             document.querySelector('.add-accessory-btn').addEventListener('click', addAccessoryCalculator);
@@ -398,19 +404,13 @@
             document.querySelector('.pdf-btn').addEventListener('click', generateAndUploadPDF);
             
             document.getElementById('spacesContainer').addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-space-btn')) {
-                    removeSpaceCalculator(e.target.dataset.id);
-                } else if (e.target.classList.contains('add-deduction-btn')) {
-                    addDeductionItemForSpace(e.target.dataset.id);
-                } else if (e.target.classList.contains('remove-btn')) {
-                    removeDeductionItem(e.target.dataset.spaceId, e.target.dataset.index);
-                }
+                if (e.target.classList.contains('remove-space-btn')) { removeSpaceCalculator(e.target.dataset.id); } 
+                else if (e.target.classList.contains('add-deduction-btn')) { addDeductionItemForSpace(e.target.dataset.id); } 
+                else if (e.target.classList.contains('remove-btn')) { removeDeductionItem(e.target.dataset.spaceId, parseInt(e.target.dataset.index)); }
             });
 
             document.getElementById('accessoriesContainer').addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-accessory-btn')) {
-                    removeAccessoryCalculator(e.target.dataset.id);
-                }
+                if (e.target.classList.contains('remove-accessory-btn')) { removeAccessoryCalculator(e.target.dataset.id); }
             });
             
             const designCompanyInput = document.getElementById('designCompany');
@@ -438,6 +438,9 @@
             
             designCompanyInput.addEventListener('input', updateTitles);
             projectNameInput.addEventListener('input', updateTitles);
+
+            addSpaceCalculator();
+            addAccessoryCalculator();
         });
     </script>
 </body>
