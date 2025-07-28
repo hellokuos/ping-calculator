@@ -389,7 +389,7 @@
 
     <script>
         // --- UPDATED URL ---
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwsSQmYDJrbGV5Ng5y2wNOx2ptijS5Sj_-LxImClqtch4FZ4gVUJ1kdiomJ0lq8Fc9C/exec';
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby1k8YMOaOc7q9Wa3hPOUM9eoVtp2o0mRwJTRPY5BmQWfgPfd9oshIrzCSoD6nq4zg6/exec';
         // -------------------
 
         const PING_CONVERSION_FACTOR = 0.3025;
@@ -473,7 +473,7 @@
         function addDeductionItemForSpace(spaceId) {
             const itemInput = document.getElementById(`deductionItem-${spaceId}`);
             const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
-            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
+            const widthInput = document.getElementById(`deductionWidth-${space.id}`);
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value);
             const width = parseFloat(widthInput.value);
