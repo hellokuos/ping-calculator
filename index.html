@@ -229,7 +229,7 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
-        .add-space-btn, .remove-space-btn, .calculate-all-btn, .sync-btn {
+        .add-space-btn, .remove-space-btn, .calculate-all-btn, .sync-btn, .pdf-btn {
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
@@ -253,18 +253,6 @@
         }
         .calculate-all-btn:hover {
             background-color: #d35400;
-        }
-        .sync-btn {
-            background-color: #9b59b6; color: white;
-            font-size: 1.1em;
-            padding: 12px 25px;
-        }
-        .sync-btn:hover {
-            background-color: #8e44ad;
-        }
-        .sync-btn:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
         }
         .pdf-btn {
             background-color: #e74c3c; color: white;
@@ -328,8 +316,6 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
-        
-        /* 總計結算區域 */
         .total-summary {
             margin: 20px 0;
             padding: 20px;
@@ -386,14 +372,13 @@
             font-size: 1.4em !important;
             color: white !important;
         }
-        
         @media (max-width: 480px) {
             h1 { font-size: 1.6em; }
             .info-section h2, .space-calculator h3, .result-section h2 { font-size: 1.3em; }
             .space-calculator h3 { font-size: 1.1em; }
             .info-group label, .space-input-group label { font-size: 0.9em; flex-basis: 80px; }
             .info-group input, .info-group select, .space-input-group input { font-size: 0.9em; padding: 6px; }
-            .add-space-btn, .calculate-all-btn, .sync-btn { font-size: 1em; padding: 8px 15px; }
+            .add-space-btn, .calculate-all-btn, .sync-btn, .pdf-btn { font-size: 1em; padding: 8px 15px; }
             .remove-space-btn { font-size: 0.8em; padding: 4px 8px; }
             .deduction-form .deduction-item-input { width: 80px; }
             .deduction-form button { font-size: 0.85em; padding: 4px 8px;}
@@ -433,8 +418,6 @@
                     <select id="housingType">
                         <option value="新成屋">新成屋</option>
                         <option value="中古屋">中古屋</option>
-                        <option value="老屋">老屋</option>
-                        <option value="其他">其他</option>
                     </select>
                 </div>
                 <div class="info-group">
@@ -449,21 +432,15 @@
                     <label for="keyPassword">鑰匙/密碼：</label>
                     <input type="text" id="keyPassword" placeholder="例如：門口電子鎖密碼 1234">
                 </div>
-                <div class="info-group full-width">
-                    <label for="generalNotes">備註：</label>
-                    <input type="text" id="generalNotes" placeholder="例如：需要注意踢腳板樣式">
-                </div>
             </div>
         </div>
         <div id="spacesContainer"></div>
         <div class="button-container">
             <button type="button" class="add-space-btn" onclick="addSpaceCalculator()">+ 添加新空間</button>
             <button type="button" class="calculate-all-btn" onclick="calculateAllSpaces()">計算全部坪數</button>
-            <button type="button" class="sync-btn" onclick="syncToGoogleSheets()">📊 同步到 Google Sheets</button>
             <button type="button" class="pdf-btn" onclick="generateAndUploadPDF()">📄 生成PDF並上傳雲端</button>
         </div>
         
-        <!-- 總計結算區域 -->
         <div id="totalSummary" class="total-summary" style="display: none;">
             <h2>🎯 坪數總結算</h2>
             <div class="summary-content">
@@ -472,16 +449,16 @@
                     <span class="summary-value" id="totalSpaces">0</span> 個
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總實際面積：</span>
-                    <span class="summary-value" id="totalActualArea">0.00</span> m²
+                    <span class="summary-label">總實際面積 (cm²)：</span>
+                    <span class="summary-value" id="totalActualArea">0</span> cm²
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總扣除面積：</span>
-                    <span class="summary-value" id="totalDeductionArea">0.00</span> m²
+                    <span class="summary-label">總扣除面積 (cm²)：</span>
+                    <span class="summary-value" id="totalDeductionArea">0</span> cm²
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總淨面積：</span>
-                    <span class="summary-value" id="totalNetArea">0.00</span> m²
+                    <span class="summary-label">總淨面積 (cm²)：</span>
+                    <span class="summary-value" id="totalNetArea">0</span> cm²
                 </div>
                 <div class="summary-row final-result">
                     <span class="summary-label">🏆 最終所需坪數：</span>
@@ -494,9 +471,9 @@
     </div>
 
     <script>
-        const SQM_TO_PING_FACTOR = 0.3025;
+        const PING_CONVERSION_FACTOR = 0.3025;
         // ***** 這就是修改過的地方！*****
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw7NmpVFAL23w2QLG9nJI_EJoIK--D-Yn_wxVJfBQm4RWk3_rFckWWrQIAmE9S_3fjY/exec';
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwsSQmYDJrbGV5Ng5y2wNOx2ptijS5Sj_-LxImClqtch4FZ4gVUJ1kdiomJ0lq8Fc9C/exec';
         let spaces = [];
         let spaceCounter = 0;
 
@@ -516,6 +493,8 @@
             const newSpace = {
                 id: spaceId,
                 description: `空間 ${spaceCounter}`,
+                productUsed: '',
+                remark: '',
                 length: 0,
                 width: 0,
                 notes: '',
@@ -532,7 +511,7 @@
             spaceDiv.id = space.id;
             spaceDiv.innerHTML = `
                 <h3>
-                    <span class="space-title">${space.description}</span>
+                    <span id="title-${space.id}" class="space-title">${space.description}</span>
                     <button type="button" class="remove-space-btn" onclick="removeSpaceCalculator('${space.id}')">刪除空間</button>
                 </h3>
                 <div class="space-input-group">
@@ -540,47 +519,59 @@
                     <input type="text" id="desc-${space.id}" value="${space.description}">
                 </div>
                 <div class="space-input-group">
+                    <label>使用產品：</label>
+                    <input type="text" id="product-${space.id}" value="">
+                </div>
+                <div class="space-input-group">
+                    <label>備註說明：</label>
+                    <input type="text" id="remark-${space.id}" placeholder="底板、架高...">
+                </div>
+                <div class="space-input-group">
                     <label>房間長度：</label>
-                    <input type="number" id="length-${space.id}" value="0" step="0.01">
-                    <span class="unit">米 (m)</span>
+                    <input type="number" id="length-${space.id}" value="0" step="1">
+                    <span class="unit">公分 (cm)</span>
                 </div>
                 <div class="space-input-group">
                     <label>房間寬度：</label>
-                    <input type="number" id="width-${space.id}" value="0" step="0.01">
-                    <span class="unit">米 (m)</span>
+                    <input type="number" id="width-${space.id}" value="0" step="1">
+                    <span class="unit">公分 (cm)</span>
                 </div>
                 <div class="deduction-section-inner">
                     <h4>扣除項目</h4>
                     <div class="deduction-form">
-                        <input type="text" id="deductionItem-${space.id}" class="deduction-item-input" placeholder="項目名稱">
-                        <input type="number" id="deductionLength-${space.id}" class="deduction-item-input" placeholder="長 (m)" step="0.01">
-                        <input type="number" id="deductionWidth-${space.id}" class="deduction-item-input" placeholder="寬 (m)" step="0.01">
+                        <input type="text" id="deductionItem-${space.id}" class="deduction-item-input" placeholder="扣除面積">
+                        <input type="number" id="deductionLength-${space.id}" class="deduction-item-input" placeholder="長 (cm)" step="1">
+                        <input type="number" id="deductionWidth-${space.id}" class="deduction-item-input" placeholder="寬 (cm)" step="1">
                         <button type="button" onclick="addDeductionItemForSpace('${space.id}')">添加</button>
                     </div>
                     <table class="deduction-table">
                         <thead>
-                            <tr><th>#</th><th>項目名稱</th><th>長度 (m)</th><th>寬度 (m)</th><th>面積 (m²)</th><th>操作</th></tr>
+                            <tr><th>#</th><th>扣除面積</th><th>長度 (cm)</th><th>寬度 (cm)</th><th>面積 (cm²)</th><th>操作</th></tr>
                         </thead>
                         <tbody id="deductionTableBody-${space.id}"></tbody>
                     </table>
                     <div class="deduction-summary">
-                        總扣除面積：<span id="totalDeductionArea-${space.id}">0.00</span> m²
+                        總扣除面積：<span id="totalDeductionArea-${space.id}">0</span> cm²
                     </div>
                 </div>
                 <div class="space-input-group full-width">
                     <label>空間備註：</label>
-                    <input type="text" id="notes-${space.id}" value="" placeholder="例如：此區域有斜天花板">
+                    <input type="text" id="notes-${space.id}" value="" placeholder="">
                 </div>
                 <div class="space-result">
                     <h3>計算結果</h3>
-                    <p>實際房間面積：<span id="actualAreaResult-${space.id}">--</span> m²</p>
-                    <p>總扣除面積：<span id="deductionAreaResult-${space.id}">--</span> m²</p>
-                    <p>可鋪設淨面積：<span id="netAreaResult-${space.id}">--</span> m²</p>
-                    <p>所需地板面積：<span id="totalFloorAreaResult-${space.id}">--</span> m²</p>
+                    <p>實際房間面積：<span id="actualAreaResult-${space.id}">--</span> cm²</p>
+                    <p>總扣除面積：<span id="deductionAreaResult-${space.id}">--</span> cm²</p>
+                    <p>可鋪設淨面積：<span id="netAreaResult-${space.id}">--</span> cm²</p>
                     <p class="bold-result">總計所需坪數：<span id="totalPingsResult-${space.id}">--</span> 坪</p>
                 </div>
             `;
             spacesContainer.appendChild(spaceDiv);
+            
+            document.getElementById(`desc-${space.id}`).addEventListener('input', function(event) {
+                const newTitle = event.target.value.trim();
+                document.getElementById(`title-${space.id}`).textContent = newTitle || `空間 ${space.id.split('-')[1]}`;
+            });
         }
 
         function removeSpaceCalculator(spaceId) {
@@ -601,11 +592,11 @@
             const width = parseFloat(widthInput.value);
             
             if (isNaN(length) || length <= 0 || isNaN(width) || width <= 0) {
-                alert('請輸入有效的長度和寬度！');
+                alert('請輸入有效的長度和寬度(公分)！');
                 return;
             }
             
-            const area = length * width;
+            const area = Math.round(length * width);
             const space = spaces.find(s => s.id === spaceId);
             if (space) {
                 space.deductionItems.push({ item: item || '-', length: length, width: width, area: area });
@@ -622,7 +613,7 @@
             const space = spaces.find(s => s.id === spaceId);
             if (!space) return;
             
-            const tableBody = document.getElementById(`deductionTableBody-${space.id}`);
+            const tableBody = document.getElementById(`deductionTableBody-${spaceId}`);
             tableBody.innerHTML = '';
             
             space.deductionItems.forEach((item, index) => {
@@ -630,9 +621,9 @@
                 row.innerHTML = `
                     <td>${index + 1}.</td>
                     <td>${item.item}</td>
-                    <td>${item.length.toFixed(2)}</td>
-                    <td>${item.width.toFixed(2)}</td>
-                    <td>${item.area.toFixed(2)}</td>
+                    <td>${item.length}</td>
+                    <td>${item.width}</td>
+                    <td>${item.area}</td>
                     <td><button type="button" class="remove-btn" onclick="removeDeductionItem('${space.id}', ${index})">刪除</button></td>
                 `;
                 tableBody.appendChild(row);
@@ -657,7 +648,7 @@
                 total += item.area;
             });
             
-            document.getElementById(`totalDeductionArea-${space.id}`).textContent = total.toFixed(2);
+            document.getElementById(`totalDeductionArea-${space.id}`).textContent = Math.round(total);
         }
 
         function calculateAllSpaces() {
@@ -666,107 +657,38 @@
                 return;
             }
             
-            let totalActualArea = 0;
-            let totalDeductionArea = 0;
-            let totalNetArea = 0;
-            let totalPings = 0;
+            let totalActualAreaCmSq = 0;
+            let totalDeductionAreaCmSq = 0;
+            let totalNetAreaCmSq = 0;
             
             spaces.forEach(space => {
                 const length = parseFloat(document.getElementById(`length-${space.id}`).value) || 0;
                 const width = parseFloat(document.getElementById(`width-${space.id}`).value) || 0;
-                const deduction = parseFloat(document.getElementById(`totalDeductionArea-${space.id}`).textContent) || 0;
+                const deductionCmSq = parseFloat(document.getElementById(`totalDeductionArea-${space.id}`).textContent) || 0;
                 
-                const actualArea = length * width;
-                const netArea = Math.max(0, actualArea - deduction);
-                const pings = netArea / SQM_TO_PING_FACTOR;
+                const actualAreaCmSq = length * width;
+                const netAreaCmSq = Math.max(0, actualAreaCmSq - deductionCmSq);
+                const pings = (netAreaCmSq / 10000) * PING_CONVERSION_FACTOR;
                 
-                // 更新個別空間結果
-                document.getElementById(`actualAreaResult-${space.id}`).textContent = actualArea.toFixed(2);
-                document.getElementById(`deductionAreaResult-${space.id}`).textContent = deduction.toFixed(2);
-                document.getElementById(`netAreaResult-${space.id}`).textContent = netArea.toFixed(2);
-                document.getElementById(`totalFloorAreaResult-${space.id}`).textContent = netArea.toFixed(2);
+                document.getElementById(`actualAreaResult-${space.id}`).textContent = Math.round(actualAreaCmSq);
+                document.getElementById(`deductionAreaResult-${space.id}`).textContent = Math.round(deductionCmSq);
+                document.getElementById(`netAreaResult-${space.id}`).textContent = Math.round(netAreaCmSq);
                 document.getElementById(`totalPingsResult-${space.id}`).textContent = pings.toFixed(2);
                 
-                // 累計總計
-                totalActualArea += actualArea;
-                totalDeductionArea += deduction;
-                totalNetArea += netArea;
-                totalPings += pings;
+                totalActualAreaCmSq += actualAreaCmSq;
+                totalDeductionAreaCmSq += deductionCmSq;
+                totalNetAreaCmSq += netAreaCmSq;
             });
             
-            // 更新總計顯示
-            document.getElementById('totalSpaces').textContent = spaces.length;
-            document.getElementById('totalActualArea').textContent = totalActualArea.toFixed(2);
-            document.getElementById('totalDeductionArea').textContent = totalDeductionArea.toFixed(2);
-            document.getElementById('totalNetArea').textContent = totalNetArea.toFixed(2);
-            document.getElementById('finalTotalPings').textContent = totalPings.toFixed(2);
-            
-            // 顯示總計區域
-            document.getElementById('totalSummary').style.display = 'block';
-            
-            alert('計算完成！請查看下方總結算');
-        }
+            const totalPings = (totalNetAreaCmSq / 10000) * PING_CONVERSION_FACTOR;
 
-        async function syncToGoogleSheets() {
-            if (spaces.length === 0) {
-                showStatusMessage('請先添加至少一個空間', 'error');
-                return;
-            }
-            
-            const projectName = document.getElementById('projectName').value.trim();
-            if (!projectName) {
-                showStatusMessage('請填寫案場名稱', 'error');
-                return;
-            }
-            
-            // 先計算
-            calculateAllSpaces();
-            
-            const data = {
-                basicInfo: {
-                    measurementDate: document.getElementById('measurementDate').value,
-                    designCompany: document.getElementById('designCompany').value,
-                    projectName: document.getElementById('projectName').value,
-                    siteAddress: document.getElementById('siteAddress').value,
-                    personnel: document.getElementById('personnel').value,
-                    housingType: document.getElementById('housingType').value,
-                    floorCondition: document.getElementById('floorCondition').value,
-                    parkingSpace: document.getElementById('parkingSpace').value,
-                    keyPassword: document.getElementById('keyPassword').value,
-                    generalNotes: document.getElementById('generalNotes').value
-                },
-                spaces: spaces.map(space => ({
-                    description: document.getElementById(`desc-${space.id}`).value,
-                    length: parseFloat(document.getElementById(`length-${space.id}`).value) || 0,
-                    width: parseFloat(document.getElementById(`width-${space.id}`).value) || 0,
-                    actualAreaSqM: parseFloat(document.getElementById(`actualAreaResult-${space.id}`).textContent) || 0,
-                    totalDeductionAreaSqM: parseFloat(document.getElementById(`deductionAreaResult-${space.id}`).textContent) || 0,
-                    netAreaSqM: parseFloat(document.getElementById(`netAreaResult-${space.id}`).textContent) || 0,
-                    totalFloorAreaNeededSqM: parseFloat(document.getElementById(`totalFloorAreaResult-${space.id}`).textContent) || 0,
-                    totalFloorAreaNeededPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
-                    notes: document.getElementById(`notes-${space.id}`).value,
-                    deductionItems: space.deductionItems
-                }))
-            };
-            
-            showStatusMessage('正在同步...', 'info');
-            
-            try {
-                const response = await fetch(GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                    redirect: 'follow'
-                });
-                
-                // 由於 no-cors 的限制，我們無法讀取回應，所以假設成功
-                showStatusMessage('✅ 同步完成！', 'success');
-            } catch (error) {
-                console.error('同步錯誤:', error);
-                showStatusMessage('❌ 同步失敗：' + error.message, 'error');
-            }
+            document.getElementById('totalSpaces').textContent = spaces.length;
+            document.getElementById('totalActualArea').textContent = Math.round(totalActualAreaCmSq);
+            document.getElementById('totalDeductionArea').textContent = Math.round(totalDeductionAreaCmSq);
+            document.getElementById('totalNetArea').textContent = Math.round(totalNetAreaCmSq);
+            document.getElementById('finalTotalPings').textContent = totalPings.toFixed(2);
+            document.getElementById('totalSummary').style.display = 'block';
+            alert('計算完成！請查看下方總結算');
         }
 
         async function generateAndUploadPDF() {
@@ -781,12 +703,9 @@
                 return;
             }
             
-            // 先計算
             calculateAllSpaces();
-            
             showStatusMessage('正在生成PDF...', 'info');
             
-            // 收集所有資料
             const data = {
                 action: 'generatePDF',
                 basicInfo: {
@@ -799,17 +718,17 @@
                     floorCondition: document.getElementById('floorCondition').value,
                     parkingSpace: document.getElementById('parkingSpace').value,
                     keyPassword: document.getElementById('keyPassword').value,
-                    generalNotes: document.getElementById('generalNotes').value
                 },
                 spaces: spaces.map(space => ({
                     description: document.getElementById(`desc-${space.id}`).value,
+                    productUsed: document.getElementById(`product-${space.id}`).value,
+                    remark: document.getElementById(`remark-${space.id}`).value,
                     length: parseFloat(document.getElementById(`length-${space.id}`).value) || 0,
                     width: parseFloat(document.getElementById(`width-${space.id}`).value) || 0,
-                    actualAreaSqM: parseFloat(document.getElementById(`actualAreaResult-${space.id}`).textContent) || 0,
-                    totalDeductionAreaSqM: parseFloat(document.getElementById(`deductionAreaResult-${space.id}`).textContent) || 0,
-                    netAreaSqM: parseFloat(document.getElementById(`netAreaResult-${space.id}`).textContent) || 0,
-                    totalFloorAreaNeededSqM: parseFloat(document.getElementById(`totalFloorAreaResult-${space.id}`).textContent) || 0,
-                    totalFloorAreaNeededPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
+                    actualAreaSqCm: parseFloat(document.getElementById(`actualAreaResult-${space.id}`).textContent) || 0,
+                    totalDeductionAreaSqCm: parseFloat(document.getElementById(`deductionAreaResult-${space.id}`).textContent) || 0,
+                    netAreaSqCm: parseFloat(document.getElementById(`netAreaResult-${space.id}`).textContent) || 0,
+                    totalPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
                     notes: document.getElementById(`notes-${space.id}`).value,
                     deductionItems: space.deductionItems
                 })),
@@ -827,7 +746,7 @@
             try {
                 const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // <--- 加入這個看看
+                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -835,7 +754,6 @@
                     redirect: 'follow'
                 });
                 
-                // 由於 no-cors 的限制，我們無法讀取回應，所以假設成功
                 showStatusMessage('✅ PDF已生成並上傳到雲端硬碟！', 'success');
             } catch (error) {
                 console.error('PDF生成錯誤:', error);
@@ -843,10 +761,41 @@
             }
         }
 
-        // 初始化
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('measurementDate').value = new Date().toISOString().split('T')[0];
             addSpaceCalculator();
+
+            const designCompanyInput = document.getElementById('designCompany');
+            const projectNameInput = document.getElementById('projectName');
+            const mainTitleElement = document.getElementById('mainTitle');
+            
+            const originalBrowserTitle = document.title;
+            const originalMainTitle = mainTitleElement.textContent;
+
+            function updateTitles() {
+                const company = designCompanyInput.value.trim();
+                const project = projectNameInput.value.trim();
+                let newTitle = '';
+
+                if (company && project) {
+                    newTitle = `${company} - ${project}`;
+                } else if (company) {
+                    newTitle = `${company} - 計算中...`;
+                } else if (project) {
+                    newTitle = `${project} - 計算中...`;
+                }
+                
+                if (newTitle) {
+                    document.title = newTitle;
+                    mainTitleElement.textContent = newTitle;
+                } else {
+                    document.title = originalBrowserTitle;
+                    mainTitleElement.textContent = originalMainTitle;
+                }
+            }
+
+            designCompanyInput.addEventListener('input', updateTitles);
+            projectNameInput.addEventListener('input', updateTitles);
         });
     </script>
 </body>
