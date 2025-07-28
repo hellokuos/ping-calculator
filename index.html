@@ -388,8 +388,11 @@
     </div>
 
     <script>
-        const PING_CONVERSION_FACTOR = 0.3025;
+        // --- UPDATED URL ---
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwsSQmYDJrbGV5Ng5y2wNOx2ptijS5Sj_-LxImClqtch4FZ4gVUJ1kdiomJ0lq8Fc9C/exec';
+        // -------------------
+
+        const PING_CONVERSION_FACTOR = 0.3025;
         let spaces = [];
         let accessories = [];
         let spaceCounter = 0;
@@ -513,7 +516,7 @@
             const space = spaces.find(s => s.id === spaceId);
             if (!space) return;
             let total = space.deductionItems.reduce((sum, item) => sum + item.area, 0);
-            document.getElementById(`totalDeductionArea-${spaceId}`).textContent = Math.round(total);
+            document.getElementById(`totalDeductionArea-${space.id}`).textContent = Math.round(total);
         }
 
         function addAccessoryCalculator() {
@@ -641,7 +644,6 @@
                     method: 'POST',
                     mode: 'no-cors', 
                     cache: 'no-cache',
-                    // Use text/plain for 'no-cors' mode to improve compatibility
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify(data),
                 });
@@ -653,17 +655,11 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            // --- FIX STARTS HERE ---
-            // Old problematic code:
-            // document.getElementById('measurementDate').valueAsDate = new Date();
-            
-            // New robust code:
             const today = new Date();
             const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
             const dd = String(today.getDate()).padStart(2, '0');
             document.getElementById('measurementDate').value = `${yyyy}-${mm}-${dd}`;
-            // --- FIX ENDS HERE ---
 
             addSpaceCalculator();
             addAccessoryCalculator();
