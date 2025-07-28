@@ -388,10 +388,7 @@
     </div>
 
     <script>
-        // --- UPDATED URL ---
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby1k8YMOaOc7q9Wa3hPOUM9eoVtp2o0mRwJTRPY5BmQWfgPfd9oshIrzCSoD6nq4zg6/exec';
-        // -------------------
-
         const PING_CONVERSION_FACTOR = 0.3025;
         let spaces = [];
         let accessories = [];
@@ -461,6 +458,7 @@
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
                 document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `空間 ${space.id.split('-')[1]}`;
             });
+            // This is the fix: Re-attaching the event listener for the "Add Deduction" button.
             spaceDiv.querySelector('.add-deduction-btn').addEventListener('click', () => addDeductionItemForSpace(space.id));
         }
 
@@ -473,7 +471,7 @@
         function addDeductionItemForSpace(spaceId) {
             const itemInput = document.getElementById(`deductionItem-${spaceId}`);
             const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
-            const widthInput = document.getElementById(`deductionWidth-${space.id}`);
+            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value);
             const width = parseFloat(widthInput.value);
@@ -516,13 +514,13 @@
             const space = spaces.find(s => s.id === spaceId);
             if (!space) return;
             let total = space.deductionItems.reduce((sum, item) => sum + item.area, 0);
-            document.getElementById(`totalDeductionArea-${space.id}`).textContent = Math.round(total);
+            document.getElementById(`totalDeductionArea-${spaceId}`).textContent = Math.round(total);
         }
 
         function addAccessoryCalculator() {
             accessoryCounter++;
             const accessoryId = `acc-${accessoryCounter}`;
-            accessories.push({ id: accessoryId, description: `配件 ${accessoryCounter}` });
+            accessories.push({ id: accessoryId, description: '' }); // Start with empty description
             renderAccessoryCalculator(accessories[accessories.length - 1]);
         }
 
@@ -532,7 +530,7 @@
             accessoryDiv.classList.add('accessory-calculator');
             accessoryDiv.id = accessory.id;
             accessoryDiv.innerHTML = `
-                <h3><span id="title-${accessory.id}" class="accessory-title">${accessory.description}</span><button type="button" class="remove-accessory-btn" onclick="removeAccessoryCalculator('${accessory.id}')">刪除配件</button></h3>
+                <h3><span id="title-${accessory.id}" class="accessory-title">收邊配件</span><button type="button" class="remove-accessory-btn" onclick="removeAccessoryCalculator('${accessory.id}')">刪除配件</button></h3>
                 <div class="accessory-input-group"><label>區域/品項：</label><input type="text" id="desc-${accessory.id}" value=""></div>
                 <div class="accessory-input-group"><label>長度 (cm)：</label><input type="number" id="length-${accessory.id}" value="0" step="1"></div>
                 <div class="accessory-input-group"><label>寬度/數量：</label><input type="number" id="width-${accessory.id}" value="0" step="1"></div>
@@ -540,7 +538,10 @@
             `;
             accessoriesContainer.appendChild(accessoryDiv);
             document.getElementById(`desc-${accessory.id}`).addEventListener('input', (e) => {
-                document.getElementById(`title-${accessory.id}`).textContent = e.target.value.trim() || `配件 ${accessory.id.split('-')[1]}`;
+                const titleText = e.target.value.trim() || '收邊配件';
+                document.getElementById(`title-${accessory.id}`).textContent = titleText;
+                const acc = accessories.find(a => a.id === accessory.id);
+                if(acc) acc.description = e.target.value.trim();
             });
         }
 
@@ -552,12 +553,6 @@
         function calculateAllSpaces() {
             if (spaces.length === 0) {
                 showStatusMessage('請先添加至少一個空間再進行計算', 'info');
-                // Reset summary if no spaces exist
-                document.getElementById('totalSpaces').textContent = '0';
-                document.getElementById('totalActualArea').textContent = '0';
-                document.getElementById('totalDeductionArea').textContent = '0';
-                document.getElementById('totalNetArea').textContent = '0';
-                document.getElementById('finalTotalPings').textContent = '0.00';
                 document.getElementById('totalSummary').style.display = 'none';
                 return false;
             }
@@ -565,6 +560,7 @@
             spaces.forEach(space => {
                 const length = parseFloat(document.getElementById(`length-${space.id}`).value) || 0;
                 const width = parseFloat(document.getElementById(`width-${space.id}`).value) || 0;
+                updateTotalDeduction(space.id); // Ensure deduction is up-to-date before calculating
                 const deductionCmSq = parseFloat(document.getElementById(`totalDeductionArea-${space.id}`).textContent) || 0;
                 const actualAreaCmSq = length * width;
                 const netAreaCmSq = Math.max(0, actualAreaCmSq - deductionCmSq);
@@ -593,7 +589,7 @@
                 showStatusMessage('請填寫案場名稱', 'error'); 
                 return; 
             }
-            if (!calculateAllSpaces()) return; // Stop if calculation fails (e.g., no spaces)
+            if (!calculateAllSpaces()) return;
 
             showStatusMessage('正在生成PDF...', 'info');
             const data = {
@@ -625,8 +621,8 @@
                     totalPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
                     deductionItems: space.deductionItems
                 })),
-                accessories: accessories.map(acc => ({
-                    description: document.getElementById(`desc-${acc.id}`).value,
+                accessories: accessories.filter(acc => acc.description).map(acc => ({ // Only send accessories with a description
+                    description: acc.description,
                     length: document.getElementById(`length-${acc.id}`).value,
                     width: document.getElementById(`width-${acc.id}`).value,
                     notes: document.getElementById(`notes-${acc.id}`).value
