@@ -637,13 +637,12 @@
                 }
             };
             try {
-                // Using 'no-cors' mode means we won't get a response back, but the request will be sent.
-                // This is a common pattern for "fire-and-forget" logging to Google Apps Script.
                 await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
                     cache: 'no-cache',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Use text/plain for no-cors
+                    // Use text/plain for 'no-cors' mode to improve compatibility
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify(data),
                 });
                 showStatusMessage('✅ PDF已發送生成請求！請稍後至雲端硬碟查看。', 'success');
@@ -654,7 +653,18 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('measurementDate').valueAsDate = new Date();
+            // --- FIX STARTS HERE ---
+            // Old problematic code:
+            // document.getElementById('measurementDate').valueAsDate = new Date();
+            
+            // New robust code:
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('measurementDate').value = `${yyyy}-${mm}-${dd}`;
+            // --- FIX ENDS HERE ---
+
             addSpaceCalculator();
             addAccessoryCalculator();
             
