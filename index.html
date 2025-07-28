@@ -423,6 +423,7 @@
                     <label for="personnel">施作人員：</label>
                     <input type="text" id="personnel" placeholder="例如：李小明">
                 </div>
+                <!-- ***** 這就是修正過的地方！房屋類型已改回填空 ***** -->
                 <div class="info-group">
                     <label for="housingType">房屋類型：</label>
                     <input type="text" id="housingType" placeholder="例如：新成屋">
@@ -488,7 +489,6 @@
 
     <script>
         const PING_CONVERSION_FACTOR = 0.3025;
-        // ***** 這就是修改過的地方！*****
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwsSQmYDJrbGV5Ng5y2wNOx2ptijS5Sj_-LxImClqtch4FZ4gVUJ1kdiomJ0lq8Fc9C/exec';
         let spaces = [];
         let accessories = [];
@@ -721,15 +721,18 @@
             }
         }
 
+        // ***** 這就是修正過的地方！確保配件區塊會被初始加載 *****
         window.addEventListener('DOMContentLoaded', function() {
             document.getElementById('measurementDate').value = new Date().toISOString().split('T')[0];
             addSpaceCalculator();
-            addAccessoryCalculator();
+            addAccessoryCalculator(); // <--- 修正點：確保此行存在
+            
             const designCompanyInput = document.getElementById('designCompany');
             const projectNameInput = document.getElementById('projectName');
             const mainTitleElement = document.getElementById('mainTitle');
             const originalBrowserTitle = document.title;
             const originalMainTitle = mainTitleElement.textContent;
+            
             function updateTitles() {
                 const company = designCompanyInput.value.trim();
                 const project = projectNameInput.value.trim();
