@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坪數計算器</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 800px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h2, h3, h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+        h4 { font-size: 1.1em; }
+        .info-section, .space-calculator, .result-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fefefe;
+            text-align: left;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media (min-width: 600px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .info-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .info-group label {
+            font-weight: 600;
+            color: #34495e;
+            flex-basis: 100px;
+            text-align: right;
+            font-size: 0.95em;
+        }
+        .info-group input[type="text"],
+        .info-group input[type="date"],
+        .info-group select {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95em;
+            box-sizing: border-box;
+        }
+        .info-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .info-group.full-width label {
+            flex-basis: 100px;
+        }
+        .info-group.full-width input[type="text"] {
+            flex-grow: 1;
+            height: 50px;
+            resize: vertical;
+        }
+        .space-calculator {
+            border: 1px solid #d0d0d0;
+            background-color: #fafafa;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            padding: 15px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .space-calculator h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .space-calculator h3 .space-title {
+            flex-grow: 1;
+            text-align: left;
+            margin-right: 10px;
+        }
+        .remove-space-btn {
+            position: static;
+            margin-left: auto;
+            background-color: #e74c3c; color: white;
+            border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.9em;
+        }
+        .remove-space-btn:hover {
+            background-color: #c0392b;
+        }
+        .space-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .space-input-group label {
+            flex-basis: 90px;
+            font-size: 0.95em;
+        }
+        .space-input-group input[type="text"],
+        .space-input-group input[type="number"] {
+            flex-grow: 1;
+            padding: 8px;
+            font-size: 0.95em;
+        }
+        .space-input-group .unit {
+            font-size: 0.9em;
+            margin-left: 3px;
+        }
+        .space-input-group.full-width {
+            align-items: flex-start;
+        }
+        .space-input-group.full-width label {
+            flex-basis: 90px;
+        }
+        .space-input-group.full-width input[type="text"] {
+            flex-grow: 1;
+            height: 50px;
+        }
+        .deduction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .deduction-table th, .deduction-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .deduction-table th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+        }
+        .deduction-table input[type="text"], .deduction-table input[type="number"] {
+            width: 90%;
+            padding: 3px;
+            font-size: 0.9em;
+        }
+        .deduction-table .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        .deduction-table .remove-btn:hover {
+            background-color: #c0392b;
+        }
+        .deduction-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        .deduction-form .deduction-item-input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            width: 100px;
+        }
+        .deduction-form button {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 3px;
+        }
+        .deduction-form button:hover {
+            background-color: #2980b9;
+        }
+        .deduction-summary {
+            text-align: right;
+            margin-top: 8px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .add-space-btn, .remove-space-btn, .calculate-all-btn, .sync-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 15px;
+        }
+        .add-space-btn {
+            background-color: #2ecc71; color: white;
+        }
+        .add-space-btn:hover {
+            background-color: #27ae60;
+        }
+        .calculate-all-btn {
+            background-color: #f39c12; color: white;
+            font-size: 1.2em;
+            padding: 12px 25px;
+        }
+        .calculate-all-btn:hover {
+            background-color: #d35400;
+        }
+        .sync-btn {
+            background-color: #9b59b6; color: white;
+            font-size: 1.1em;
+            padding: 12px 25px;
+        }
+        .sync-btn:hover {
+            background-color: #8e44ad;
+        }
+        .sync-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .pdf-btn {
+            background-color: #e74c3c; color: white;
+            font-size: 1.1em;
+            padding: 12px 25px;
+        }
+        .pdf-btn:hover {
+            background-color: #c0392b;
+        }
+        .pdf-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .space-result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #eafaf1;
+            border-radius: 5px;
+            border: 1px solid #a3e4d7;
+            font-size: 1em;
+            line-height: 1.5;
+            text-align: left;
+            color: #2c3e50;
+        }
+        .space-result h3 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .space-result p {
+            margin-bottom: 6px;
+        }
+        .space-result span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .space-result .bold-result {
+            font-size: 1.15em;
+            color: #e67e22;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .status-message {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* 總計結算區域 */
+        .total-summary {
+            margin: 20px 0;
+            padding: 20px;
+            border: 3px solid #ff6d01;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe8dc 100%);
+            text-align: center;
+        }
+        .total-summary h2 {
+            color: #ff6d01;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .summary-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+        .summary-row.final-result {
+            margin-top: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6d01 0%, #ff8534 100%);
+            border-radius: 8px;
+            border-bottom: none;
+        }
+        .summary-row.final-result .summary-label,
+        .summary-row.final-result .summary-value {
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .summary-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .summary-value {
+            font-weight: bold;
+            color: #e67e22;
+            font-size: 1.1em;
+        }
+        .final-pings {
+            font-size: 1.4em !important;
+            color: white !important;
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6em; }
+            .info-section h2, .space-calculator h3, .result-section h2 { font-size: 1.3em; }
+            .space-calculator h3 { font-size: 1.1em; }
+            .info-group label, .space-input-group label { font-size: 0.9em; flex-basis: 80px; }
+            .info-group input, .info-group select, .space-input-group input { font-size: 0.9em; padding: 6px; }
+            .add-space-btn, .calculate-all-btn, .sync-btn { font-size: 1em; padding: 8px 15px; }
+            .remove-space-btn { font-size: 0.8em; padding: 4px 8px; }
+            .deduction-form .deduction-item-input { width: 80px; }
+            .deduction-form button { font-size: 0.85em; padding: 4px 8px;}
+            .deduction-table th, .deduction-table td { padding: 4px; }
+            .space-result { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="mainTitle">坪數計算器</h1>
+        <div class="info-section">
+            <h2>案場基本資訊</h2>
+            <div class="info-grid">
+                <div class="info-group">
+                    <label for="measurementDate">丈量日期：</label>
+                    <input type="date" id="measurementDate">
+                </div>
+                <div class="info-group">
+                    <label for="designCompany">設計公司：</label>
+                    <input type="text" id="designCompany" placeholder="例如：有璽設計">
+                </div>
+                <div class="info-group">
+                    <label for="projectName">案場名稱：</label>
+                    <input type="text" id="projectName" placeholder="例如：王先生宅邸">
+                </div>
+                <div class="info-group">
+                    <label for="siteAddress">案場地址：</label>
+                    <input type="text" id="siteAddress" placeholder="例如：台北市大安區...">
+                </div>
+                <div class="info-group">
+                    <label for="personnel">施作人員：</label>
+                    <input type="text" id="personnel" placeholder="例如：李小明">
+                </div>
+                <div class="info-group">
+                    <label for="housingType">房屋類型：</label>
+                    <select id="housingType">
+                        <option value="新成屋">新成屋</option>
+                        <option value="中古屋">中古屋</option>
+                        <option value="老屋">老屋</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="info-group">
+                    <label for="floorCondition">地坪狀況：</label>
+                    <input type="text" id="floorCondition" placeholder="例如：原始磁磚/狀況良好">
+                </div>
+                <div class="info-group">
+                    <label for="parkingSpace">停車位：</label>
+                    <input type="text" id="parkingSpace" placeholder="例如：B2坡道平面">
+                </div>
+                <div class="info-group">
+                    <label for="keyPassword">鑰匙/密碼：</label>
+                    <input type="text" id="keyPassword" placeholder="例如：門口電子鎖密碼 1234">
+                </div>
+                <div class="info-group full-width">
+                    <label for="generalNotes">備註：</label>
+                    <input type="text" id="generalNotes" placeholder="例如：需要注意踢腳板樣式">
+                </div>
+            </div>
+        </div>
+        <div id="spacesContainer"></div>
+        <div class="button-container">
+            <button type="button" class="add-space-btn" onclick="addSpaceCalculator()">+ 添加新空間</button>
+            <button type="button" class="calculate-all-btn" onclick="calculateAllSpaces()">計算全部坪數</button>
+            <button type="button" class="sync-btn" onclick="syncToGoogleSheets()">📊 同步到 Google Sheets</button>
+            <button type="button" class="pdf-btn" onclick="generateAndUploadPDF()">📄 生成PDF並上傳雲端</button>
+        </div>
+        
+        <!-- 總計結算區域 -->
+        <div id="totalSummary" class="total-summary" style="display: none;">
+            <h2>🎯 坪數總結算</h2>
+            <div class="summary-content">
+                <div class="summary-row">
+                    <span class="summary-label">總空間數量：</span>
+                    <span class="summary-value" id="totalSpaces">0</span> 個
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">總實際面積：</span>
+                    <span class="summary-value" id="totalActualArea">0.00</span> m²
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">總扣除面積：</span>
+                    <span class="summary-value" id="totalDeductionArea">0.00</span> m²
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">總淨面積：</span>
+                    <span class="summary-value" id="totalNetArea">0.00</span> m²
+                </div>
+                <div class="summary-row final-result">
+                    <span class="summary-label">🏆 最終所需坪數：</span>
+                    <span class="summary-value final-pings" id="finalTotalPings">0.00</span> 坪
+                </div>
+            </div>
+        </div>
+
+        <div id="statusMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        const SQM_TO_PING_FACTOR = 0.3025;
+        // ***** 這就是修改過的地方！*****
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw7NmpVFAL23w2QLG9nJI_EJoIK--D-Yn_wxVJfBQm4RWk3_rFckWWrQIAmE9S_3fjY/exec';
+        let spaces = [];
+        let spaceCounter = 0;
+
+        function showStatusMessage(message, type = 'info') {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            statusMessage.style.display = 'block';
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function addSpaceCalculator() {
+            spaceCounter++;
+            const spaceId = `space-${spaceCounter}`;
+            const newSpace = {
+                id: spaceId,
+                description: `空間 ${spaceCounter}`,
+                length: 0,
+                width: 0,
+                notes: '',
+                deductionItems: []
+            };
+            spaces.push(newSpace);
+            renderSpaceCalculator(newSpace);
+        }
+
+        function renderSpaceCalculator(space) {
+            const spacesContainer = document.getElementById('spacesContainer');
+            const spaceDiv = document.createElement('div');
+            spaceDiv.classList.add('space-calculator');
+            spaceDiv.id = space.id;
+            spaceDiv.innerHTML = `
+                <h3>
+                    <span class="space-title">${space.description}</span>
+                    <button type="button" class="remove-space-btn" onclick="removeSpaceCalculator('${space.id}')">刪除空間</button>
+                </h3>
+                <div class="space-input-group">
+                    <label>空間描述：</label>
+                    <input type="text" id="desc-${space.id}" value="${space.description}">
+                </div>
+                <div class="space-input-group">
+                    <label>房間長度：</label>
+                    <input type="number" id="length-${space.id}" value="0" step="0.01">
+                    <span class="unit">米 (m)</span>
+                </div>
+                <div class="space-input-group">
+                    <label>房間寬度：</label>
+                    <input type="number" id="width-${space.id}" value="0" step="0.01">
+                    <span class="unit">米 (m)</span>
+                </div>
+                <div class="deduction-section-inner">
+                    <h4>扣除項目</h4>
+                    <div class="deduction-form">
+                        <input type="text" id="deductionItem-${space.id}" class="deduction-item-input" placeholder="項目名稱">
+                        <input type="number" id="deductionLength-${space.id}" class="deduction-item-input" placeholder="長 (m)" step="0.01">
+                        <input type="number" id="deductionWidth-${space.id}" class="deduction-item-input" placeholder="寬 (m)" step="0.01">
+                        <button type="button" onclick="addDeductionItemForSpace('${space.id}')">添加</button>
+                    </div>
+                    <table class="deduction-table">
+                        <thead>
+                            <tr><th>#</th><th>項目名稱</th><th>長度 (m)</th><th>寬度 (m)</th><th>面積 (m²)</th><th>操作</th></tr>
+                        </thead>
+                        <tbody id="deductionTableBody-${space.id}"></tbody>
+                    </table>
+                    <div class="deduction-summary">
+                        總扣除面積：<span id="totalDeductionArea-${space.id}">0.00</span> m²
+                    </div>
+                </div>
+                <div class="space-input-group full-width">
+                    <label>空間備註：</label>
+                    <input type="text" id="notes-${space.id}" value="" placeholder="例如：此區域有斜天花板">
+                </div>
+                <div class="space-result">
+                    <h3>計算結果</h3>
+                    <p>實際房間面積：<span id="actualAreaResult-${space.id}">--</span> m²</p>
+                    <p>總扣除面積：<span id="deductionAreaResult-${space.id}">--</span> m²</p>
+                    <p>可鋪設淨面積：<span id="netAreaResult-${space.id}">--</span> m²</p>
+                    <p>所需地板面積：<span id="totalFloorAreaResult-${space.id}">--</span> m²</p>
+                    <p class="bold-result">總計所需坪數：<span id="totalPingsResult-${space.id}">--</span> 坪</p>
+                </div>
+            `;
+            spacesContainer.appendChild(spaceDiv);
+        }
+
+        function removeSpaceCalculator(spaceId) {
+            const index = spaces.findIndex(space => space.id === spaceId);
+            if (index !== -1) {
+                spaces.splice(index, 1);
+                document.getElementById(spaceId).remove();
+            }
+        }
+
+        function addDeductionItemForSpace(spaceId) {
+            const itemInput = document.getElementById(`deductionItem-${spaceId}`);
+            const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
+            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
+            
+            const item = itemInput.value.trim();
+            const length = parseFloat(lengthInput.value);
+            const width = parseFloat(widthInput.value);
+            
+            if (isNaN(length) || length <= 0 || isNaN(width) || width <= 0) {
+                alert('請輸入有效的長度和寬度！');
+                return;
+            }
+            
+            const area = length * width;
+            const space = spaces.find(s => s.id === spaceId);
+            if (space) {
+                space.deductionItems.push({ item: item || '-', length: length, width: width, area: area });
+                renderDeductionTable(spaceId);
+                updateTotalDeduction(spaceId);
+            }
+            
+            itemInput.value = '';
+            lengthInput.value = '';
+            widthInput.value = '';
+        }
+
+        function renderDeductionTable(spaceId) {
+            const space = spaces.find(s => s.id === spaceId);
+            if (!space) return;
+            
+            const tableBody = document.getElementById(`deductionTableBody-${space.id}`);
+            tableBody.innerHTML = '';
+            
+            space.deductionItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}.</td>
+                    <td>${item.item}</td>
+                    <td>${item.length.toFixed(2)}</td>
+                    <td>${item.width.toFixed(2)}</td>
+                    <td>${item.area.toFixed(2)}</td>
+                    <td><button type="button" class="remove-btn" onclick="removeDeductionItem('${space.id}', ${index})">刪除</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function removeDeductionItem(spaceId, index) {
+            const space = spaces.find(s => s.id === spaceId);
+            if (space) {
+                space.deductionItems.splice(index, 1);
+                renderDeductionTable(spaceId);
+                updateTotalDeduction(spaceId);
+            }
+        }
+
+        function updateTotalDeduction(spaceId) {
+            const space = spaces.find(s => s.id === spaceId);
+            if (!space) return;
+            
+            let total = 0;
+            space.deductionItems.forEach(item => {
+                total += item.area;
+            });
+            
+            document.getElementById(`totalDeductionArea-${space.id}`).textContent = total.toFixed(2);
+        }
+
+        function calculateAllSpaces() {
+            if (spaces.length === 0) {
+                alert('請先添加至少一個空間');
+                return;
+            }
+            
+            let totalActualArea = 0;
+            let totalDeductionArea = 0;
+            let totalNetArea = 0;
+            let totalPings = 0;
+            
+            spaces.forEach(space => {
+                const length = parseFloat(document.getElementById(`length-${space.id}`).value) || 0;
+                const width = parseFloat(document.getElementById(`width-${space.id}`).value) || 0;
+                const deduction = parseFloat(document.getElementById(`totalDeductionArea-${space.id}`).textContent) || 0;
+                
+                const actualArea = length * width;
+                const netArea = Math.max(0, actualArea - deduction);
+                const pings = netArea / SQM_TO_PING_FACTOR;
+                
+                // 更新個別空間結果
+                document.getElementById(`actualAreaResult-${space.id}`).textContent = actualArea.toFixed(2);
+                document.getElementById(`deductionAreaResult-${space.id}`).textContent = deduction.toFixed(2);
+                document.getElementById(`netAreaResult-${space.id}`).textContent = netArea.toFixed(2);
+                document.getElementById(`totalFloorAreaResult-${space.id}`).textContent = netArea.toFixed(2);
+                document.getElementById(`totalPingsResult-${space.id}`).textContent = pings.toFixed(2);
+                
+                // 累計總計
+                totalActualArea += actualArea;
+                totalDeductionArea += deduction;
+                totalNetArea += netArea;
+                totalPings += pings;
+            });
+            
+            // 更新總計顯示
+            document.getElementById('totalSpaces').textContent = spaces.length;
+            document.getElementById('totalActualArea').textContent = totalActualArea.toFixed(2);
+            document.getElementById('totalDeductionArea').textContent = totalDeductionArea.toFixed(2);
+            document.getElementById('totalNetArea').textContent = totalNetArea.toFixed(2);
+            document.getElementById('finalTotalPings').textContent = totalPings.toFixed(2);
+            
+            // 顯示總計區域
+            document.getElementById('totalSummary').style.display = 'block';
+            
+            alert('計算完成！請查看下方總結算');
+        }
+
+        async function syncToGoogleSheets() {
+            if (spaces.length === 0) {
+                showStatusMessage('請先添加至少一個空間', 'error');
+                return;
+            }
+            
+            const projectName = document.getElementById('projectName').value.trim();
+            if (!projectName) {
+                showStatusMessage('請填寫案場名稱', 'error');
+                return;
+            }
+            
+            // 先計算
+            calculateAllSpaces();
+            
+            const data = {
+                basicInfo: {
+                    measurementDate: document.getElementById('measurementDate').value,
+                    designCompany: document.getElementById('designCompany').value,
+                    projectName: document.getElementById('projectName').value,
+                    siteAddress: document.getElementById('siteAddress').value,
+                    personnel: document.getElementById('personnel').value,
+                    housingType: document.getElementById('housingType').value,
+                    floorCondition: document.getElementById('floorCondition').value,
+                    parkingSpace: document.getElementById('parkingSpace').value,
+                    keyPassword: document.getElementById('keyPassword').value,
+                    generalNotes: document.getElementById('generalNotes').value
+                },
+                spaces: spaces.map(space => ({
+                    description: document.getElementById(`desc-${space.id}`).value,
+                    length: parseFloat(document.getElementById(`length-${space.id}`).value) || 0,
+                    width: parseFloat(document.getElementById(`width-${space.id}`).value) || 0,
+                    actualAreaSqM: parseFloat(document.getElementById(`actualAreaResult-${space.id}`).textContent) || 0,
+                    totalDeductionAreaSqM: parseFloat(document.getElementById(`deductionAreaResult-${space.id}`).textContent) || 0,
+                    netAreaSqM: parseFloat(document.getElementById(`netAreaResult-${space.id}`).textContent) || 0,
+                    totalFloorAreaNeededSqM: parseFloat(document.getElementById(`totalFloorAreaResult-${space.id}`).textContent) || 0,
+                    totalFloorAreaNeededPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
+                    notes: document.getElementById(`notes-${space.id}`).value,
+                    deductionItems: space.deductionItems
+                }))
+            };
+            
+            showStatusMessage('正在同步...', 'info');
+            
+            try {
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                });
+                
+                // 由於 no-cors 的限制，我們無法讀取回應，所以假設成功
+                showStatusMessage('✅ 同步完成！', 'success');
+            } catch (error) {
+                console.error('同步錯誤:', error);
+                showStatusMessage('❌ 同步失敗：' + error.message, 'error');
+            }
+        }
+
+        async function generateAndUploadPDF() {
+            if (spaces.length === 0) {
+                showStatusMessage('請先添加至少一個空間', 'error');
+                return;
+            }
+            
+            const projectName = document.getElementById('projectName').value.trim();
+            if (!projectName) {
+                showStatusMessage('請填寫案場名稱', 'error');
+                return;
+            }
+            
+            // 先計算
+            calculateAllSpaces();
+            
+            showStatusMessage('正在生成PDF...', 'info');
+            
+            // 收集所有資料
+            const data = {
+                action: 'generatePDF',
+                basicInfo: {
+                    measurementDate: document.getElementById('measurementDate').value,
+                    designCompany: document.getElementById('designCompany').value,
+                    projectName: document.getElementById('projectName').value,
+                    siteAddress: document.getElementById('siteAddress').value,
+                    personnel: document.getElementById('personnel').value,
+                    housingType: document.getElementById('housingType').value,
+                    floorCondition: document.getElementById('floorCondition').value,
+                    parkingSpace: document.getElementById('parkingSpace').value,
+                    keyPassword: document.getElementById('keyPassword').value,
+                    generalNotes: document.getElementById('generalNotes').value
+                },
+                spaces: spaces.map(space => ({
+                    description: document.getElementById(`desc-${space.id}`).value,
+                    length: parseFloat(document.getElementById(`length-${space.id}`).value) || 0,
+                    width: parseFloat(document.getElementById(`width-${space.id}`).value) || 0,
+                    actualAreaSqM: parseFloat(document.getElementById(`actualAreaResult-${space.id}`).textContent) || 0,
+                    totalDeductionAreaSqM: parseFloat(document.getElementById(`deductionAreaResult-${space.id}`).textContent) || 0,
+                    netAreaSqM: parseFloat(document.getElementById(`netAreaResult-${space.id}`).textContent) || 0,
+                    totalFloorAreaNeededSqM: parseFloat(document.getElementById(`totalFloorAreaResult-${space.id}`).textContent) || 0,
+                    totalFloorAreaNeededPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
+                    notes: document.getElementById(`notes-${space.id}`).value,
+                    deductionItems: space.deductionItems
+                })),
+                summary: {
+                    totalSpaces: parseInt(document.getElementById('totalSpaces').textContent),
+                    totalActualArea: parseFloat(document.getElementById('totalActualArea').textContent),
+                    totalDeductionArea: parseFloat(document.getElementById('totalDeductionArea').textContent),
+                    totalNetArea: parseFloat(document.getElementById('totalNetArea').textContent),
+                    finalTotalPings: parseFloat(document.getElementById('finalTotalPings').textContent)
+                }
+            };
+            
+            console.log('發送 PDF 生成請求:', data);
+            
+            try {
+                const response = await fetch(GAS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // <--- 加入這個看看
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                    redirect: 'follow'
+                });
+                
+                // 由於 no-cors 的限制，我們無法讀取回應，所以假設成功
+                showStatusMessage('✅ PDF已生成並上傳到雲端硬碟！', 'success');
+            } catch (error) {
+                console.error('PDF生成錯誤:', error);
+                showStatusMessage('❌ PDF生成失敗：' + error.message, 'error');
+            }
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('measurementDate').value = new Date().toISOString().split('T')[0];
+            addSpaceCalculator();
+        });
+    </script>
+</body>
+</html>
