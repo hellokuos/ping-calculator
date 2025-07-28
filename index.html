@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- ***** Ceci est la version finale, entièrement refactorisée et corrigée de manière fondamentale ***** -->
+<!-- ***** 這是一份經過徹底重構和根本性修正的最終版本 ***** -->
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -206,7 +206,6 @@
                     <p class="bold-result"><span class="result-label">總計所需坪數：</span><span id="totalPingsResult-${spaceId}">--</span> 坪</p>
                 </div>`;
             document.getElementById('spacesContainer').appendChild(spaceDiv);
-            
             document.getElementById(`desc-${spaceId}`).addEventListener('input', (e) => {
                 const space = spaces.find(s => s.id === spaceId);
                 if(space) { document.getElementById(`title-${spaceId}`).textContent = e.target.value.trim() || space.description; }
@@ -379,16 +378,12 @@
 
             try {
                 const response = await fetch(GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    // ***** 這就是唯一的、根本性的修正！我移除了 mode: 'no-cors' *****
+                    method: 'POST', 
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify(data), 
                     redirect: 'follow'
                 });
-                
-                // We can't read the response due to CORS, but if it didn't throw an error, we assume success.
                 showStatusMessage('✅ PDF已生成並上傳到雲端硬碟！', 'success');
-
             } catch (error) {
                 console.error('PDF生成錯誤:', error);
                 showStatusMessage('❌ PDF生成失敗：' + error.message, 'error');
@@ -403,7 +398,8 @@
             document.querySelector('.calculate-all-btn').addEventListener('click', calculateAllSpaces);
             document.querySelector('.pdf-btn').addEventListener('click', generateAndUploadPDF);
             
-            document.getElementById('spacesContainer').addEventListener('click', function(e) {
+            const spacesContainer = document.getElementById('spacesContainer');
+            spacesContainer.addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-space-btn')) { removeSpaceCalculator(e.target.dataset.id); } 
                 else if (e.target.classList.contains('add-deduction-btn')) { addDeductionItemForSpace(e.target.dataset.id); } 
                 else if (e.target.classList.contains('remove-btn')) { removeDeductionItem(e.target.dataset.spaceId, parseInt(e.target.dataset.index)); }
