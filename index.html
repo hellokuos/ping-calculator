@@ -48,7 +48,7 @@
         h3 { margin-bottom: 20px; font-size: 1.3em; }
         h4 { margin-bottom: 16px; font-size: 1.1em; color: var(--primary-color); font-weight: 500; }
 
-        .info-section, .space-calculator, .accessory-calculator {
+        .form-section {
             margin-bottom: 24px;
             padding: 20px;
             border: 1px solid var(--separator-color);
@@ -56,18 +56,18 @@
             background-color: var(--component-background);
             text-align: left;
         }
-        .info-grid {
+        .form-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 16px;
         }
-        .info-group, .space-input-group, .accessory-input-group {
+        .form-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
             text-align: left;
         }
-        .info-group label, .space-input-group label, .accessory-input-group label {
+        .form-group label {
             font-weight: 400;
             color: var(--text-secondary);
             font-size: 0.9em;
@@ -76,11 +76,12 @@
         input[type="text"], input[type="date"], input[type="number"] {
             width: 100%;
             padding: 12px;
-            border: 1px solid var(--separator-color);
+            border: 1px solid #C7C7CC;
             border-radius: var(--border-radius-md);
             font-size: 1em;
             background-color: #F8F8F8;
             transition: border-color 0.2s, box-shadow 0.2s;
+            color-scheme: light; /* Ensures date picker is light themed */
         }
         input::placeholder { color: #AEAEB2; }
         input:focus {
@@ -90,12 +91,13 @@
             box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
         }
         
-        .space-calculator h3, .accessory-calculator h3 {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
-        .space-title, .accessory-title { flex-grow: 1; }
+        .section-header .title { flex-grow: 1; text-align: left; }
         
         .deduction-form {
             display: grid;
@@ -131,7 +133,6 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            max-width: 400px;
             padding: 14px 22px;
             border: none;
             border-radius: var(--border-radius-md);
@@ -143,8 +144,9 @@
         .btn:hover { filter: brightness(1.1); }
         .btn:disabled { background-color: #AEAEB2; cursor: not-allowed; }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-danger-solid { background-color: var(--danger-color); color: white; }
-        .btn-text-danger { background: none; color: var(--danger-color); padding: 4px 8px; font-size: 0.9em; }
+        .btn-primary.full-width { max-width: 100%; }
+        .btn-danger-solid { background-color: var(--danger-color); color: white; max-width: 400px; }
+        .btn-text-danger { background: none; color: var(--danger-color); padding: 4px 8px; font-size: 0.9em; flex-shrink: 0; }
 
         .space-result {
             margin-top: 24px; padding: 16px; background-color: #F2F2F7;
@@ -191,7 +193,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (min-width: 768px) {
-            .info-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
             .deduction-form { grid-template-columns: 1fr 1fr 1fr auto; align-items: flex-end; }
         }
     </style>
@@ -199,45 +201,18 @@
 <body>
     <div class="container">
         <h1 id="mainTitle">坪數計算器</h1>
-        <div class="info-section">
+        <div class="form-section">
             <h2>案場基本資訊</h2>
-            <div class="info-grid">
-                <div class="info-group">
-                    <label for="measurementDate">丈量日期</label>
-                    <input type="date" id="measurementDate">
-                </div>
-                <div class="info-group">
-                    <label for="designCompany">設計公司</label>
-                    <input type="text" id="designCompany" placeholder="有璽設計">
-                </div>
-                <div class="info-group">
-                    <label for="projectName">案場名稱</label>
-                    <input type="text" id="projectName" placeholder="李宅、富邦醴仁、遠雄百富 ...">
-                </div>
-                <div class="info-group">
-                    <label for="siteAddress">案場地址</label>
-                    <input type="text" id="siteAddress" placeholder="台北市大安區...">
-                </div>
-                <div class="info-group">
-                    <label for="personnel">施作人員</label>
-                    <input type="text" id="personnel" placeholder="邱大俠、濤濤、阿成、德恩 ...">
-                </div>
-                <div class="info-group">
-                    <label for="housingType">房屋類型</label>
-                    <input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋">
-                </div>
-                <div class="info-group">
-                    <label for="floorCondition">目前地坪</label>
-                    <input type="text" id="floorCondition" placeholder="毛胚、泥作、拋光石英磚、磨石子地 ...">
-                </div>
-                <div class="info-group">
-                    <label for="parkingSpace">停車位</label>
-                    <input type="text" id="parkingSpace" placeholder="B2坡道平面">
-                </div>
-                <div class="info-group">
-                    <label for="keyPassword">鑰匙/密碼</label>
-                    <input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234">
-                </div>
+            <div class="form-grid">
+                <div class="form-group"><label for="measurementDate">丈量日期</label><input type="date" id="measurementDate"></div>
+                <div class="form-group"><label for="designCompany">設計公司</label><input type="text" id="designCompany" placeholder="有璽設計"></div>
+                <div class="form-group"><label for="projectName">案場名稱</label><input type="text" id="projectName" placeholder="李宅、富邦醴仁、遠雄百富 ..."></div>
+                <div class="form-group"><label for="siteAddress">案場地址</label><input type="text" id="siteAddress" placeholder="台北市大安區..."></div>
+                <div class="form-group"><label for="personnel">施作人員</label><input type="text" id="personnel" placeholder="邱大俠、濤濤、阿成、德恩 ..."></div>
+                <div class="form-group"><label for="housingType">房屋類型</label><input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋"></div>
+                <div class="form-group"><label for="floorCondition">目前地坪</label><input type="text" id="floorCondition" placeholder="毛胚、泥作、拋光石英磚、磨石子地 ..."></div>
+                <div class="form-group"><label for="parkingSpace">停車位</label><input type="text" id="parkingSpace" placeholder="B2坡道平面"></div>
+                <div class="form-group"><label for="keyPassword">鑰匙/密碼</label><input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234"></div>
             </div>
         </div>
 
@@ -262,26 +237,11 @@
         <div id="totalSummary" class="total-summary" style="display: none;">
             <h2>🎯 坪數總結算</h2>
             <div class="summary-content">
-                <div class="summary-row">
-                    <span class="summary-label">總空間數量</span>
-                    <span class="summary-value" id="totalSpaces">0 個</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">總實際面積 (cm²)</span>
-                    <span class="summary-value" id="totalActualArea">0 cm²</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">總扣除面積 (cm²)</span>
-                    <span class="summary-value" id="totalDeductionArea">0 cm²</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">總淨面積 (cm²)</span>
-                    <span class="summary-value" id="totalNetArea">0 cm²</span>
-                </div>
-                <div class="summary-row final-result">
-                    <span class="summary-label">🏆 最終所需坪數</span>
-                    <span class="summary-value final-pings" id="finalTotalPings">0.00 坪</span>
-                </div>
+                <div class="summary-row"><span class="summary-label">總空間數量</span><span class="summary-value" id="totalSpaces">0 個</span></div>
+                <div class="summary-row"><span class="summary-label">總實際面積 (cm²)</span><span class="summary-value" id="totalActualArea">0 cm²</span></div>
+                <div class="summary-row"><span class="summary-label">總扣除面積 (cm²)</span><span class="summary-value" id="totalDeductionArea">0 cm²</span></div>
+                <div class="summary-row"><span class="summary-label">總淨面積 (cm²)</span><span class="summary-value" id="totalNetArea">0 cm²</span></div>
+                <div class="summary-row final-result"><span class="summary-label">🏆 最終所需坪數</span><span class="summary-value final-pings" id="finalTotalPings">0.00 坪</span></div>
             </div>
         </div>
 
@@ -318,22 +278,24 @@
         function renderSpaceCalculator(space) {
             const spacesContainer = document.getElementById('spacesContainer');
             const spaceDiv = document.createElement('div');
-            spaceDiv.classList.add('space-calculator');
+            spaceDiv.classList.add('form-section');
             spaceDiv.id = space.id;
             spaceDiv.innerHTML = `
-                <h3>
-                    <span class="space-title" id="title-${space.id}">新空間</span>
+                <h3 class="section-header">
+                    <span class="title" id="title-${space.id}">新空間</span>
                     <button type="button" class="btn btn-text-danger" onclick="removeSpaceCalculator('${space.id}')">刪除</button>
                 </h3>
-                <div class="space-input-group"><label>空間描述</label><input type="text" id="desc-${space.id}" placeholder="客廳、主臥、廚房 ..."></div>
-                <div class="space-input-group"><label>使用產品</label><input type="text" id="product-${space.id}"></div>
-                <div class="space-input-group"><label>房間長度 (cm)</label><input type="number" id="length-${space.id}" step="1"></div>
-                <div class="space-input-group"><label>房間寬度 (cm)</label><input type="number" id="width-${space.id}" step="1"></div>
-                <div class="space-input-group"><label>施工工法</label><input type="text" id="constructionMethod-${space.id}"></div>
-                <div class="space-input-group"><label>鋪設方向</label><input type="text" id="layingDirection-${space.id}"></div>
-                <div class="space-input-group"><label>是否需整地</label><input type="text" id="needsLeveling-${space.id}"></div>
-                <div class="space-input-group"><label>是否需鋸門</label><input type="text" id="needsDoorCutting-${space.id}"></div>
-                <div class="space-input-group"><label>備註說明</label><input type="text" id="remark-${space.id}" placeholder="底板、架高等..."></div>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>空間描述</label><input type="text" id="desc-${space.id}" placeholder="客廳、主臥、廚房 ..."></div>
+                    <div class="form-group"><label>使用產品</label><input type="text" id="product-${space.id}"></div>
+                    <div class="form-group"><label>備註說明</label><input type="text" id="remark-${space.id}" placeholder="底板、架高等..."></div>
+                    <div class="form-group"><label>房間長度 (cm)</label><input type="number" id="length-${space.id}" step="1"></div>
+                    <div class="form-group"><label>房間寬度 (cm)</label><input type="number" id="width-${space.id}" step="1"></div>
+                    <div class="form-group"><label>施工工法</label><input type="text" id="constructionMethod-${space.id}"></div>
+                    <div class="form-group"><label>鋪設方向</label><input type="text" id="layingDirection-${space.id}"></div>
+                    <div class="form-group"><label>是否需整地</label><input type="text" id="needsLeveling-${space.id}"></div>
+                    <div class="form-group"><label>是否需鋸門</label><input type="text" id="needsDoorCutting-${space.id}"></div>
+                </div>
                 
                 <div class="deduction-section-inner" style="margin-top: 24px;">
                     <h4>扣除面積</h4>
@@ -374,9 +336,9 @@
         }
 
         function addDeductionItemForSpace(spaceId) {
-            const itemInput = document.getElementById(`deductionItem-${spaceId}`);
-            const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
-            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
+            const itemInput = document.getElementById(`deductionItem-${space.id}`);
+            const lengthInput = document.getElementById(`deductionLength-${space.id}`);
+            const widthInput = document.getElementById(`deductionWidth-${space.id}`);
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value) || 0;
             const width = parseFloat(widthInput.value) || 0;
@@ -432,17 +394,19 @@
         function renderAccessoryCalculator(accessory) {
             const accessoriesContainer = document.getElementById('accessoriesContainer');
             const accessoryDiv = document.createElement('div');
-            accessoryDiv.classList.add('accessory-calculator');
+            accessoryDiv.classList.add('form-section');
             accessoryDiv.id = accessory.id;
             accessoryDiv.innerHTML = `
-                <h3>
-                    <span class="accessory-title" id="title-${accessory.id}">新配件</span>
+                <h3 class="section-header">
+                    <span class="title" id="title-${accessory.id}">新配件</span>
                     <button type="button" class="btn btn-text-danger" onclick="removeAccessoryCalculator('${accessory.id}')">刪除</button>
                 </h3>
-                <div class="accessory-input-group"><label>區域/品項</label><input type="text" id="desc-${accessory.id}" value=""></div>
-                <div class="accessory-input-group"><label>長度 (cm)</label><input type="number" id="length-${accessory.id}" step="1"></div>
-                <div class="accessory-input-group"><label>寬度/數量</label><input type="number" id="width-${accessory.id}" step="1"></div>
-                <div class="accessory-input-group"><label>備註</label><input type="text" id="notes-${accessory.id}" value=""></div>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>區域/品項</label><input type="text" id="desc-${accessory.id}" value=""></div>
+                    <div class="form-group"><label>長度 (cm)</label><input type="number" id="length-${accessory.id}" step="1"></div>
+                    <div class="form-group"><label>寬度/數量</label><input type="number" id="width-${accessory.id}" step="1"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>備註</label><input type="text" id="notes-${accessory.id}" value=""></div>
+                </div>
             `;
             accessoriesContainer.appendChild(accessoryDiv);
             document.getElementById(`desc-${accessory.id}`).addEventListener('input', (e) => {
@@ -520,7 +484,7 @@
                     keyPassword: document.getElementById('keyPassword').value,
                 },
                 spaces: spaces.map(space => ({
-                    description: document.getElementById(`desc-${space.id}`).value || '未命名空間',
+                    description: space.description || '未命名空間',
                     productUsed: document.getElementById(`product-${space.id}`).value,
                     remark: document.getElementById(`remark-${space.id}`).value,
                     constructionMethod: document.getElementById(`constructionMethod-${space.id}`).value,
