@@ -242,8 +242,8 @@
 
         @media (min-width: 768px) {
             .form-grid { grid-template-columns: repeat(2, 1fr); }
-            .form-grid.single-column .form-group,
-            .form-grid.single-column input {
+            .form-grid.single-column input,
+            .form-grid.single-column .form-group {
                  grid-column: 1 / -1;
             }
         }
@@ -461,15 +461,12 @@
             `;
             spacesContainer.appendChild(spaceDiv);
             
-            // --- ★★★ 這就是修復的關鍵 ★★★ ---
-            // 將事件監聽器綁定到新創建的元素上
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
                 document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `新空間`;
                 const currentSpace = spaces.find(s => s.id === space.id);
                 if (currentSpace) currentSpace.description = e.target.value.trim();
             });
             
-            // 確保「添加扣除項目」按鈕的功能被正確綁定
             spaceDiv.querySelector('.add-deduction-btn').addEventListener('click', () => addDeductionItemForSpace(space.id));
         }
 
