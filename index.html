@@ -165,6 +165,15 @@
         .space-result p { margin: 0 0 8px 0; }
         .space-result .bold-result { font-size: 1.2em; color: var(--text-primary); font-weight: 600; text-align: center; margin-top: 12px; }
         
+        /* ★★★ 這就是修改過的地方 ★★★ */
+        .space-result .final-pings-result {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        .space-name-prefix {
+            margin-right: 0.5em;
+        }
+
         .status-message { margin: 16px 0; padding: 12px; border-radius: var(--border-radius-md); font-weight: 500; }
         .status-success { background-color: #E5F9ED; color: #00642D; }
         .status-error { background-color: #FFF0F0; color: #A80000; }
@@ -456,13 +465,18 @@
                     <p>實際房間面積: <span id="actualAreaResult-${space.id}">--</span> cm²</p>
                     <p>總扣除面積: <span id="deductionAreaResult-${space.id}">--</span> cm²</p>
                     <p>實際施工面積: <span id="netAreaResult-${space.id}">--</span> cm²</p>
-                    <p class="bold-result">總計所需坪數: <span id="totalPingsResult-${space.id}">--</span> 坪</p>
+                    <p class="bold-result final-pings-result">
+                        <span class="space-name-prefix" id="spaceNamePrefix-${space.id}">新空間</span> 
+                        總計所需坪數: <span id="totalPingsResult-${space.id}">--</span> 坪
+                    </p>
                 </div>
             `;
             spacesContainer.appendChild(spaceDiv);
             
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
-                document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `新空間`;
+                const newName = e.target.value.trim() || `新空間`;
+                document.getElementById(`title-${space.id}`).textContent = newName;
+                document.getElementById(`spaceNamePrefix-${space.id}`).textContent = newName;
                 const currentSpace = spaces.find(s => s.id === space.id);
                 if (currentSpace) currentSpace.description = e.target.value.trim();
             });
