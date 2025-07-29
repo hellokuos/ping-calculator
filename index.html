@@ -231,6 +231,74 @@
             .form-grid { grid-template-columns: repeat(2, 1fr); }
             .deduction-form { grid-template-columns: 1fr 1fr 1fr auto; align-items: flex-end; }
         }
+
+        /* ================================== */
+        /* ========= 手機版優化樣式 ========= */
+        /* ================================== */
+
+        @media (max-width: 768px) {
+            /* --- 1. 整體佈局與字體優化 --- */
+            body {
+                padding: 10px; /* 縮小頁面邊距，增加內容可視區域 */
+                -webkit-text-size-adjust: 100%; /* 防止 iOS 橫向時字體自動放大 */
+            }
+
+            .container {
+                padding: 0; /* 在手機上讓 section 自己控制邊距 */
+            }
+
+            .form-section {
+                padding: 15px; /* 調整區塊的內邊距 */
+            }
+
+            h1 {
+                font-size: 1.8em; /* 調整主標題大小 */
+            }
+
+            h2 {
+                font-size: 1.4em; /* 調整章節標題大小 */
+            }
+
+            /* --- 2. 統一輸入框樣式 (核心修正) --- */
+            /* 
+            * 使用一個更通用的選擇器來確保所有在 .form-grid 內的 input 樣式一致。
+            * 這是解決日期輸入框寬度問題的關鍵。
+            */
+            .form-grid input[type="text"],
+            .form-grid input[type="date"],
+            .form-grid input[type="number"] {
+                font-size: 16px;      /* 避免 iOS 輸入時自動縮放頁面 */
+                min-height: 44px;     /* 設定最小觸控高度，方便點擊 */
+                padding: 11px 12px;   /* 微調 padding 以配合新的 min-height */
+                -webkit-appearance: none; /* 重置部分瀏覽器原生樣式，但通常對 date input 影響不大 */
+                appearance: none;
+            }
+            
+            /* 為了讓 date input 仍然可以點擊出現日曆，我們需要確保它看起來和其他輸入框一樣 */
+            input[type="date"] {
+                /* 在 iOS 上，即使重置 appearance，日期選擇功能通常仍可用。
+                這確保了樣式統一，同時保留了核心功能。 */
+                background-color: #F8F8F8; /* 確保背景色一致 */
+            }
+
+
+            /* --- 3. 優化按鈕觸控體驗 --- */
+            .btn {
+                padding: 12px 20px;
+                font-size: 16px;
+                min-height: 44px; /* 同樣應用最小觸控高度 */
+            }
+
+            /* --- 4. 調整表格在小螢幕的顯示 --- */
+            .deduction-form {
+                grid-template-columns: 1fr; /* 強制垂直排列 */
+                gap: 12px;
+            }
+
+            .deduction-form input, .deduction-form button {
+                width: 100%; /* 讓添加按鈕也變成滿寬，更易點擊 */
+            }
+        }
     </style>
 </head>
 <body>
