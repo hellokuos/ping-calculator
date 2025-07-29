@@ -270,13 +270,13 @@
         </div>
         
         <div id="totalSummary" class="total-summary" style="display: none;">
-            <h2>🎯 坪數總結算</h2>
+            <h2>坪數總結算</h2>
             <div class="summary-content">
                 <div class="summary-row"><span class="summary-label">總空間數量</span><span class="summary-value" id="totalSpaces">0 個</span></div>
                 <div class="summary-row"><span class="summary-label">總實際面積 (cm²)</span><span class="summary-value" id="totalActualArea">0 cm²</span></div>
                 <div class="summary-row"><span class="summary-label">總扣除面積 (cm²)</span><span class="summary-value" id="totalDeductionArea">0 cm²</span></div>
                 <div class="summary-row"><span class="summary-label">總淨面積 (cm²)</span><span class="summary-value" id="totalNetArea">0 cm²</span></div>
-                <div class="summary-row final-result"><span class="summary-label">🏆 最終所需坪數</span><span class="summary-value final-pings" id="finalTotalPings">0.00 坪</span></div>
+                <div class="summary-row final-result"><span class="summary-label">最終所需坪數 (不含耗損)</span><span class="summary-value final-pings" id="finalTotalPings">0.00 坪</span></div>
             </div>
         </div>
 
@@ -422,9 +422,9 @@
         }
 
         function addDeductionItemForSpace(spaceId) {
-            const itemInput = document.getElementById(`deductionItem-${space.id}`);
-            const lengthInput = document.getElementById(`deductionLength-${space.id}`);
-            const widthInput = document.getElementById(`deductionWidth-${space.id}`);
+            const itemInput = document.getElementById(`deductionItem-${spaceId}`);
+            const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
+            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value) || 0;
             const width = parseFloat(widthInput.value) || 0;
