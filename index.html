@@ -93,14 +93,14 @@
             display: flex;
             align-items: center;
             width: 100%;
-            gap: 16px; /* 使用 gap 替代 justify-content 來創造間距 */
+            gap: 16px; 
         }
         .section-header .title {
-            flex-grow: 1; /* 讓標題佔據多數空間，將按鈕推到右邊 */
+            flex-grow: 1; 
             text-align: left;
-            white-space: nowrap;      /* ★★★ 新增：防止標題文字換行 ★★★ */
-            overflow: hidden;         /* ★★★ 新增：隱藏超出的文字 ★★★ */
-            text-overflow: ellipsis;  /* ★★★ 新增：如果文字太長，顯示 ... ★★★ */
+            white-space: nowrap;      
+            overflow: hidden;         
+            text-overflow: ellipsis;  
         }
         
         .deduction-form {
@@ -154,7 +154,14 @@
             color: var(--danger-color);
             padding: 4px 8px;
             font-size: 0.9em;
-            flex-shrink: 0; /* ★★★ 新增：確保刪除按鈕本身不會被壓縮 ★★★ */
+            flex-shrink: 0;
+        }
+        /* ★★★ 新增：用於標題列的小按鈕樣式 ★★★ */
+        .btn.btn-small {
+            width: auto;
+            padding: 8px 14px;
+            font-size: 0.9em;
+            flex-shrink: 0;
         }
 
         .space-result {
@@ -244,64 +251,46 @@
             .deduction-form { grid-template-columns: 1fr 1fr 1fr auto; align-items: flex-end; }
         }
 
-        /* ================================== */
-        /* ========= 手機版優化樣式 ========= */
-        /* ================================== */
-
         @media (max-width: 768px) {
-            /* --- 1. 整體佈局與字體優化 --- */
             body {
-                padding: 10px; /* 縮小頁面邊距，增加內容可視區域 */
-                -webkit-text-size-adjust: 100%; /* 防止 iOS 橫向時字體自動放大 */
+                padding: 10px;
+                -webkit-text-size-adjust: 100%;
             }
-
             .container {
-                padding: 0; /* 在手機上讓 section 自己控制邊距 */
+                padding: 0;
             }
-
             .form-section {
-                padding: 15px; /* 調整區塊的內邊距 */
+                padding: 15px;
             }
-
             h1 {
-                font-size: 1.8em; /* 調整主標題大小 */
+                font-size: 1.8em;
             }
-
             h2 {
-                font-size: 1.4em; /* 調整章節標題大小 */
+                font-size: 1.4em;
             }
-
-            /* --- 2. 統一輸入框樣式 (核心修正) --- */
             .form-grid input[type="text"],
             .form-grid input[type="date"],
             .form-grid input[type="number"] {
-                font-size: 16px;      /* 避免 iOS 輸入時自動縮放頁面 */
-                min-height: 44px;     /* 設定最小觸控高度，方便點擊 */
-                padding: 11px 12px;   /* 微調 padding 以配合新的 min-height */
+                font-size: 16px;
+                min-height: 44px;
+                padding: 11px 12px;
                 -webkit-appearance: none; 
                 appearance: none;
             }
-            
             input[type="date"] {
-                background-color: #F8F8F8; /* 確保背景色一致 */
+                background-color: #F8F8F8;
             }
-
-
-            /* --- 3. 優化按鈕觸控體驗 --- */
             .btn {
                 padding: 12px 20px;
                 font-size: 16px;
-                min-height: 44px; /* 同樣應用最小觸控高度 */
+                min-height: 44px;
             }
-
-            /* --- 4. 調整表格在小螢幕的顯示 --- */
             .deduction-form {
-                grid-template-columns: 1fr; /* 強制垂直排列 */
+                grid-template-columns: 1fr;
                 gap: 12px;
             }
-
             .deduction-form input, .deduction-form button {
-                width: 100%; /* 讓添加按鈕也變成滿寬，更易點擊 */
+                width: 100%;
             }
         }
     </style>
@@ -312,15 +301,15 @@
         <div class="form-section">
             <h2>案場基本資訊</h2>
             <div class="form-grid">
-                <div class="form-group"><label for="measurementDate">丈量日期</label><input type="date" id="measurementDate"></div>
-                <div class="form-group"><label for="designCompany">設計公司</label><input type="text" id="designCompany" placeholder="有璽設計"></div>
-                <div class="form-group"><label for="projectName">案場名稱</label><input type="text" id="projectName" placeholder="李宅、富邦醴仁、遠雄百富 ..."></div>
-                <div class="form-group"><label for="siteAddress">案場地址</label><input type="text" id="siteAddress" placeholder="台北市大安區..."></div>
-                <div class="form-group"><label for="personnel">施作人員</label><input type="text" id="personnel" placeholder="邱大俠、濤濤、阿成、德恩 ..."></div>
-                <div class="form-group"><label for="housingType">房屋類型</label><input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋"></div>
-                <div class="form-group"><label for="floorCondition">目前地坪</label><input type="text" id="floorCondition" placeholder="毛胚、泥作、拋光石英磚、磨石子地 ..."></div>
-                <div class="form-group"><label for="parkingSpace">停車位</label><input type="text" id="parkingSpace" placeholder="B2坡道平面"></div>
-                <div class="form-group" style="grid-column: 1 / -1;"><label for="keyPassword">鑰匙/密碼</label><input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234"></div>
+                <div class="form-group"><label for="measurementDate">丈量日期：</label><input type="date" id="measurementDate"></div>
+                <div class="form-group"><label for="designCompany">設計公司：</label><input type="text" id="designCompany" placeholder="有璽設計"></div>
+                <div class="form-group"><label for="projectName">案場名稱：</label><input type="text" id="projectName" placeholder="李宅、富邦醴仁、遠雄百富 ..."></div>
+                <div class="form-group"><label for="siteAddress">案場地址：</label><input type="text" id="siteAddress" placeholder="台北市大安區..."></div>
+                <div class="form-group"><label for="personnel">施作人員：</label><input type="text" id="personnel" placeholder="邱大俠、濤濤、阿成、德恩 ..."></div>
+                <div class="form-group"><label for="housingType">房屋類型：</label><input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋"></div>
+                <div class="form-group"><label for="floorCondition">目前地坪：</label><input type="text" id="floorCondition" placeholder="毛胚、泥作、拋光石英磚、磨石子地 ..."></div>
+                <div class="form-group"><label for="parkingSpace">停車位：</label><input type="text" id="parkingSpace" placeholder="B2坡道平面"></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label for="keyPassword">鑰匙/密碼：</label><input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234"></div>
             </div>
         </div>
 
@@ -439,25 +428,26 @@
             const spaceDiv = document.createElement('div');
             spaceDiv.classList.add('form-section');
             spaceDiv.id = space.id;
+            // ★★★ 更新此處的 HTML，使用新的按鈕樣式和標籤 ★★★
             spaceDiv.innerHTML = `
                 <h3 class="section-header">
                     <span class="title" id="title-${space.id}">新空間</span>
-                    <button type="button" class="btn btn-text-danger" onclick="removeSpaceCalculator('${space.id}')">刪除</button>
+                    <button type="button" class="btn btn-danger-solid btn-small" onclick="removeSpaceCalculator('${space.id}')">刪除空間</button>
                 </h3>
                 <div class="form-grid">
-                    <div class="form-group" style="grid-column: 1 / -1;"><label>空間描述</label><input type="text" id="desc-${space.id}" placeholder="客廳、主臥、廚房 ..."></div>
-                    <div class="form-group"><label>使用產品</label><input type="text" id="product-${space.id}"></div>
-                    <div class="form-group"><label>備註說明</label><input type="text" id="remark-${space.id}" placeholder="底板、架高等..."></div>
-                    <div class="form-group"><label>房間長度 (cm)</label><input type="number" id="length-${space.id}" step="1"></div>
-                    <div class="form-group"><label>房間寬度 (cm)</label><input type="number" id="width-${space.id}" step="1"></div>
-                    <div class="form-group"><label>施工工法</label><input type="text" id="constructionMethod-${space.id}"></div>
-                    <div class="form-group"><label>鋪設方向</label><input type="text" id="layingDirection-${space.id}"></div>
-                    <div class="form-group"><label>是否需整地</label><input type="text" id="needsLeveling-${space.id}"></div>
-                    <div class="form-group"><label>是否需鋸門</label><input type="text" id="needsDoorCutting-${space.id}"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>空間描述：</label><input type="text" id="desc-${space.id}" placeholder="客廳、主臥、廚房 ..."></div>
+                    <div class="form-group"><label>使用產品：</label><input type="text" id="product-${space.id}"></div>
+                    <div class="form-group"><label>備註說明：</label><input type="text" id="remark-${space.id}" placeholder="底板、架高等..."></div>
+                    <div class="form-group"><label>房間長度 (cm)：</label><input type="number" id="length-${space.id}" step="1"></div>
+                    <div class="form-group"><label>房間寬度 (cm)：</label><input type="number" id="width-${space.id}" step="1"></div>
+                    <div class="form-group"><label>施工工法：</label><input type="text" id="constructionMethod-${space.id}"></div>
+                    <div class="form-group"><label>鋪設方向：</label><input type="text" id="layingDirection-${space.id}"></div>
+                    <div class="form-group"><label>是否需整地：</label><input type="text" id="needsLeveling-${space.id}"></div>
+                    <div class="form-group"><label>是否需鋸門：</label><input type="text" id="needsDoorCutting-${space.id}"></div>
                 </div>
                 
                 <div class="deduction-section-inner" style="margin-top: 24px;">
-                    <h4>扣除面積</h4>
+                    <h4>扣除面積：</h4>
                     <div class="deduction-form">
                         <input type="text" id="deductionItem-${space.id}" placeholder="書櫃、衣櫃、系統櫃、流理台、柱子 ...">
                         <input type="number" id="deductionLength-${space.id}" placeholder="長 (cm)" step="1">
@@ -480,6 +470,8 @@
                 </div>
             `;
             spacesContainer.appendChild(spaceDiv);
+            
+            // ★★★ 確保動態標題功能正常運作 ★★★
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
                 document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `新空間`;
                 const currentSpace = spaces.find(s => s.id === space.id);
@@ -555,19 +547,22 @@
             const accessoryDiv = document.createElement('div');
             accessoryDiv.classList.add('form-section');
             accessoryDiv.id = accessory.id;
+            // ★★★ 更新此處的 HTML，使用新的按鈕樣式和標籤 ★★★
             accessoryDiv.innerHTML = `
                 <h3 class="section-header">
                     <span class="title" id="title-${accessory.id}">新配件</span>
-                    <button type="button" class="btn btn-text-danger" onclick="removeAccessoryCalculator('${accessory.id}')">刪除</button>
+                    <button type="button" class="btn btn-danger-solid btn-small" onclick="removeAccessoryCalculator('${accessory.id}')">刪除配件</button>
                 </h3>
                 <div class="form-grid">
-                    <div class="form-group" style="grid-column: 1 / -1;"><label>區域/品項</label><input type="text" id="desc-${accessory.id}" value=""></div>
-                    <div class="form-group"><label>長度 (cm)</label><input type="number" id="length-${accessory.id}" step="1"></div>
-                    <div class="form-group"><label>寬度/數量</label><input type="number" id="width-${accessory.id}" step="1"></div>
-                    <div class="form-group" style="grid-column: 1 / -1;"><label>備註</label><input type="text" id="notes-${accessory.id}" value=""></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>區域/品項：</label><input type="text" id="desc-${accessory.id}" value=""></div>
+                    <div class="form-group"><label>長度 (cm)：</label><input type="number" id="length-${accessory.id}" step="1"></div>
+                    <div class="form-group"><label>寬度/數量：</label><input type="number" id="width-${accessory.id}" step="1"></div>
+                    <div class="form-group" style="grid-column: 1 / -1;"><label>備註：</label><input type="text" id="notes-${accessory.id}" value=""></div>
                 </div>
             `;
             accessoriesContainer.appendChild(accessoryDiv);
+            
+            // ★★★ 確保動態標題功能正常運作 ★★★
             document.getElementById(`desc-${accessory.id}`).addEventListener('input', (e) => {
                 const titleText = e.target.value.trim() || '新配件';
                 document.getElementById(`title-${accessory.id}`).textContent = titleText;
