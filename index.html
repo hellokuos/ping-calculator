@@ -6,15 +6,15 @@
     <title>坪數計算器</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-gray: #f4f7f6;
-            --medium-gray: #ecf0f1;
-            --dark-gray: #7f8c8d;
-            --text-color: #2c3e50;
-            --border-radius: 8px;
+            --primary-color: #007AFF;
+            --danger-color: #FF3B30;
+            --background-color: #F2F2F7;
+            --component-background: #FFFFFF;
+            --text-primary: #1D1D1F;
+            --text-secondary: #6E6E73;
+            --separator-color: #E5E5EA;
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
         }
         *, *::before, *::after {
             box-sizing: border-box;
@@ -22,166 +22,163 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            background-color: var(--light-gray);
-            color: var(--text-color);
+            background-color: var(--background-color);
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 10px;
+            padding: 24px 12px;
         }
         .container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--component-background);
+            padding: 24px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 800px;
+            max-width: 720px;
             text-align: center;
         }
         h1, h2, h3, h4 {
             margin-top: 0;
             line-height: 1.3;
+            font-weight: 600;
         }
-        h1 { margin-bottom: 20px; font-size: 1.8em; }
-        h2 { margin-bottom: 20px; font-size: 1.5em; border-bottom: 1px solid var(--medium-gray); padding-bottom: 10px; }
-        h3 { margin-bottom: 15px; font-size: 1.25em; }
-        h4 { margin-bottom: 15px; font-size: 1.1em; color: var(--primary-color); }
+        h1 { margin-bottom: 24px; font-size: 2em; }
+        h2 { margin-bottom: 24px; font-size: 1.6em; border-bottom: 1px solid var(--separator-color); padding-bottom: 12px; }
+        h3 { margin-bottom: 20px; font-size: 1.3em; }
+        h4 { margin-bottom: 16px; font-size: 1.1em; color: var(--primary-color); font-weight: 500; }
 
         .info-section, .space-calculator, .accessory-calculator {
-            margin-bottom: 25px;
+            margin-bottom: 24px;
             padding: 20px;
-            border: 1px solid var(--medium-gray);
-            border-radius: var(--border-radius);
-            background-color: #fdfdfd;
+            border: 1px solid var(--separator-color);
+            border-radius: var(--border-radius-lg);
+            background-color: var(--component-background);
             text-align: left;
         }
         .info-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 15px;
+            gap: 16px;
         }
         .info-group, .space-input-group, .accessory-input-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
             text-align: left;
         }
         .info-group label, .space-input-group label, .accessory-input-group label {
-            font-weight: 500;
-            color: var(--text-color);
+            font-weight: 400;
+            color: var(--text-secondary);
             font-size: 0.9em;
+            padding-left: 4px;
         }
         input[type="text"], input[type="date"], input[type="number"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            border: 1px solid var(--separator-color);
+            border-radius: var(--border-radius-md);
             font-size: 1em;
+            background-color: #F8F8F8;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        input::placeholder { color: #AEAEB2; }
         input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: var(--component-background);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
         }
         
         .space-calculator h3, .accessory-calculator h3 {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
         .space-title, .accessory-title { flex-grow: 1; }
         
         .deduction-form {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .deduction-form button { margin-top: 5px; }
         .table-wrapper { overflow-x: auto; }
         .deduction-table {
             width: 100%;
             min-width: 500px;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 16px;
         }
         .deduction-table th, .deduction-table td {
-            border: 1px solid var(--medium-gray);
-            padding: 8px 12px;
+            border-bottom: 1px solid var(--separator-color);
+            padding: 10px 12px;
             text-align: center;
         }
-        .deduction-table th { background-color: #f8f9fa; font-weight: 600; }
-        .deduction-summary { text-align: right; margin-top: 10px; font-weight: bold; font-size: 1em; }
+        .deduction-table th { background-color: #f9f9f9; font-weight: 500; color: var(--text-secondary); }
+        .deduction-summary { text-align: right; margin-top: 12px; font-weight: 500; font-size: 1em; }
 
         .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 16px;
+            margin: 24px 0;
         }
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            width: 90%;
-            max-width: 350px;
-            padding: 12px 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 14px 22px;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius-md);
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1.05em;
             font-weight: 500;
             transition: all 0.2s ease;
         }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn:disabled { background-color: var(--dark-gray); cursor: not-allowed; }
+        .btn:hover { filter: brightness(1.1); }
+        .btn:disabled { background-color: #AEAEB2; cursor: not-allowed; }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-success { background-color: var(--success-color); color: white; }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-warning { background-color: var(--warning-color); color: white; }
-        .btn-sm { padding: 5px 10px; font-size: 0.9em; }
+        .btn-danger-solid { background-color: var(--danger-color); color: white; }
+        .btn-text-danger { background: none; color: var(--danger-color); padding: 4px 8px; font-size: 0.9em; }
 
         .space-result {
-            margin-top: 20px; padding: 15px; background-color: #eafaf1;
-            border-radius: var(--border-radius); border-left: 5px solid var(--success-color);
+            margin-top: 24px; padding: 16px; background-color: #F2F2F7;
+            border-radius: var(--border-radius-lg);
         }
-        .space-result .bold-result { font-size: 1.2em; color: var(--warning-color); text-align: center; margin-top: 10px; }
+        .space-result p { margin: 0 0 8px 0; }
+        .space-result .bold-result { font-size: 1.2em; color: var(--text-primary); font-weight: 600; text-align: center; margin-top: 12px; }
         
-        .status-message {
-            margin: 15px 0; padding: 12px; border-radius: 5px; font-weight: 500;
-        }
-        .status-success { background-color: #d4edda; color: #155724; }
-        .status-error { background-color: #f8d7da; color: #721c24; }
-        .status-info { background-color: #d1ecf1; color: #0c5460; }
+        .status-message { margin: 16px 0; padding: 12px; border-radius: var(--border-radius-md); font-weight: 500; }
+        .status-success { background-color: #E5F9ED; color: #00642D; }
+        .status-error { background-color: #FFF0F0; color: #A80000; }
+        .status-info { background-color: #E5F6FF; color: #005A9E; }
         
         .total-summary {
-            margin: 20px 0; padding: 20px; border: 2px solid var(--warning-color);
-            border-radius: var(--border-radius); background: #fffaf0;
+            margin: 24px 0; padding: 24px; border: 1px solid var(--separator-color);
+            border-radius: var(--border-radius-lg); background: var(--component-background);
         }
-        .total-summary h2 { color: var(--warning-color); }
-        .summary-content { background: white; padding: 15px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .summary-content { padding: 0; }
         .summary-row {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 5px; border-bottom: 1px solid var(--medium-gray);
+            padding: 14px 0; border-bottom: 1px solid var(--separator-color);
         }
         .summary-row:last-child { border-bottom: none; }
         .summary-row.final-result {
-            margin-top: 10px; padding: 15px; background: var(--warning-color);
-            border-radius: var(--border-radius); color: white;
+            margin-top: 12px; padding: 16px; background: var(--primary-color);
+            border-radius: var(--border-radius-md); color: white;
         }
         .summary-row.final-result .summary-label, .summary-row.final-result .summary-value { color: white; }
-        .summary-label { font-weight: 500; }
-        .summary-value { font-weight: bold; font-size: 1.1em; }
+        .summary-label { font-weight: 400; color: var(--text-secondary); }
+        .summary-value { font-weight: 600; font-size: 1.1em; }
         .final-pings { font-size: 1.4em !important; }
         hr.section-divider {
-            border: 0; height: 1px;
-            background-image: linear-gradient(to right, transparent, var(--text-color), transparent);
-            margin: 40px 0; opacity: 0.2;
+            border: 0; height: 1px; background-color: var(--separator-color);
+            margin: 40px 0;
         }
         
         .spinner {
@@ -193,21 +190,9 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- RWD Enhancements --- */
-        @media (min-width: 600px) {
+        @media (min-width: 768px) {
             .info-grid { grid-template-columns: repeat(2, 1fr); }
-            .info-group, .space-input-group, .accessory-input-group {
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
-            }
-            .info-group label, .space-input-group label, .accessory-input-group label {
-                flex-basis: 120px;
-                flex-shrink: 0;
-                text-align: right;
-            }
             .deduction-form { grid-template-columns: 1fr 1fr 1fr auto; align-items: flex-end; }
-            .deduction-form button { margin-top: 0; }
         }
     </style>
 </head>
@@ -223,7 +208,7 @@
                 </div>
                 <div class="info-group">
                     <label for="designCompany">設計公司</label>
-                    <input type="text" id="designCompany" placeholder="例如：有璽設計">
+                    <input type="text" id="designCompany" placeholder="有璽設計">
                 </div>
                 <div class="info-group">
                     <label for="projectName">案場名稱</label>
@@ -231,7 +216,7 @@
                 </div>
                 <div class="info-group">
                     <label for="siteAddress">案場地址</label>
-                    <input type="text" id="siteAddress" placeholder="例如：台北市大安區...">
+                    <input type="text" id="siteAddress" placeholder="台北市大安區...">
                 </div>
                 <div class="info-group">
                     <label for="personnel">施作人員</label>
@@ -239,7 +224,7 @@
                 </div>
                 <div class="info-group">
                     <label for="housingType">房屋類型</label>
-                    <input type="text" id="housingType" placeholder="例如：新成屋">
+                    <input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋">
                 </div>
                 <div class="info-group">
                     <label for="floorCondition">目前地坪</label>
@@ -247,28 +232,28 @@
                 </div>
                 <div class="info-group">
                     <label for="parkingSpace">停車位</label>
-                    <input type="text" id="parkingSpace" placeholder="例如：B2坡道平面">
+                    <input type="text" id="parkingSpace" placeholder="B2坡道平面">
                 </div>
                 <div class="info-group">
                     <label for="keyPassword">鑰匙/密碼</label>
-                    <input type="text" id="keyPassword" placeholder="例如：門口電子鎖密碼 1234">
+                    <input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234">
                 </div>
             </div>
         </div>
 
         <div id="spacesContainer"></div>
-        <button type="button" class="btn btn-success" onclick="addSpaceCalculator()">+ 添加新空間</button>
+        <button type="button" class="btn btn-primary" onclick="addSpaceCalculator()">+ 添加新空間</button>
 
         <hr class="section-divider">
 
         <div id="accessoriesContainer"></div>
-        <button type="button" class="btn btn-success" onclick="addAccessoryCalculator()">+ 添加收邊配件</button>
+        <button type="button" class="btn btn-primary" onclick="addAccessoryCalculator()">+ 添加收邊配件</button>
 
         <hr class="section-divider">
 
         <div class="button-container">
-            <button type="button" class="btn btn-warning" onclick="calculateAllSpaces()">🧮 計算全部坪數</button>
-            <button type="button" id="pdf-btn" class="btn btn-danger" onclick="generateAndUploadPDF()">
+            <button type="button" class="btn btn-primary" onclick="calculateAllSpaces()">🧮 計算全部坪數</button>
+            <button type="button" id="pdf-btn" class="btn btn-danger-solid" onclick="generateAndUploadPDF()">
                 <span id="pdf-btn-text">📄 生成PDF並上傳雲端</span>
                 <span id="pdf-spinner" class="spinner" style="display: none;"></span>
             </button>
@@ -278,23 +263,23 @@
             <h2>🎯 坪數總結算</h2>
             <div class="summary-content">
                 <div class="summary-row">
-                    <span class="summary-label">總空間數量：</span>
+                    <span class="summary-label">總空間數量</span>
                     <span class="summary-value" id="totalSpaces">0 個</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總實際面積 (cm²)：</span>
+                    <span class="summary-label">總實際面積 (cm²)</span>
                     <span class="summary-value" id="totalActualArea">0 cm²</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總扣除面積 (cm²)：</span>
+                    <span class="summary-label">總扣除面積 (cm²)</span>
                     <span class="summary-value" id="totalDeductionArea">0 cm²</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">總淨面積 (cm²)：</span>
+                    <span class="summary-label">總淨面積 (cm²)</span>
                     <span class="summary-value" id="totalNetArea">0 cm²</span>
                 </div>
                 <div class="summary-row final-result">
-                    <span class="summary-label">🏆 最終所需坪數：</span>
+                    <span class="summary-label">🏆 最終所需坪數</span>
                     <span class="summary-value final-pings" id="finalTotalPings">0.00 坪</span>
                 </div>
             </div>
@@ -323,7 +308,7 @@
             spaceCounter++;
             const spaceId = `space-${spaceCounter}`;
             spaces.push({
-                id: spaceId, description: `空間 ${spaceCounter}`, productUsed: '', remark: '', length: 0, width: 0,
+                id: spaceId, description: '', productUsed: '', remark: '', length: 0, width: 0,
                 constructionMethod: '', layingDirection: '', needsLeveling: '', needsDoorCutting: '',
                 deductionItems: []
             });
@@ -337,8 +322,8 @@
             spaceDiv.id = space.id;
             spaceDiv.innerHTML = `
                 <h3>
-                    <span class="space-title" id="title-${space.id}">${space.description}</span>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeSpaceCalculator('${space.id}')">刪除</button>
+                    <span class="space-title" id="title-${space.id}">新空間</span>
+                    <button type="button" class="btn btn-text-danger" onclick="removeSpaceCalculator('${space.id}')">刪除</button>
                 </h3>
                 <div class="space-input-group"><label>空間描述</label><input type="text" id="desc-${space.id}" placeholder="客廳、主臥、廚房 ..."></div>
                 <div class="space-input-group"><label>使用產品</label><input type="text" id="product-${space.id}"></div>
@@ -350,13 +335,13 @@
                 <div class="space-input-group"><label>是否需鋸門</label><input type="text" id="needsDoorCutting-${space.id}"></div>
                 <div class="space-input-group"><label>備註說明</label><input type="text" id="remark-${space.id}" placeholder="底板、架高等..."></div>
                 
-                <div class="deduction-section-inner" style="margin-top: 20px;">
+                <div class="deduction-section-inner" style="margin-top: 24px;">
                     <h4>扣除面積</h4>
                     <div class="deduction-form">
                         <input type="text" id="deductionItem-${space.id}" placeholder="書櫃、衣櫃、系統櫃、流理台、柱子 ...">
                         <input type="number" id="deductionLength-${space.id}" placeholder="長 (cm)" step="1">
                         <input type="number" id="deductionWidth-${space.id}" placeholder="寬 (cm)" step="1">
-                        <button type="button" class="btn btn-sm btn-primary add-deduction-btn">添加</button>
+                        <button type="button" class="btn btn-primary add-deduction-btn">添加</button>
                     </div>
                     <div class="table-wrapper">
                         <table class="deduction-table">
@@ -375,7 +360,9 @@
             `;
             spacesContainer.appendChild(spaceDiv);
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
-                document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `空間 ${space.id.split('-')[1]}`;
+                document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `新空間`;
+                const currentSpace = spaces.find(s => s.id === space.id);
+                if (currentSpace) currentSpace.description = e.target.value.trim();
             });
             spaceDiv.querySelector('.add-deduction-btn').addEventListener('click', () => addDeductionItemForSpace(space.id));
         }
@@ -414,7 +401,7 @@
             tableBody.innerHTML = '';
             space.deductionItems.forEach((item, index) => {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${index + 1}</td><td>${item.item}</td><td>${item.length}</td><td>${item.width}</td><td>${item.area}</td><td><button type="button" class="btn btn-sm btn-danger" onclick="removeDeductionItem('${spaceId}', ${index})">刪除</button></td>`;
+                row.innerHTML = `<td>${index + 1}</td><td>${item.item}</td><td>${item.length}</td><td>${item.width}</td><td>${item.area}</td><td><button type="button" class="btn btn-text-danger" onclick="removeDeductionItem('${spaceId}', ${index})">刪除</button></td>`;
                 tableBody.appendChild(row);
             });
         }
@@ -432,7 +419,7 @@
             const space = spaces.find(s => s.id === spaceId);
             if (!space) return;
             let total = space.deductionItems.reduce((sum, item) => sum + item.area, 0);
-            document.getElementById(`totalDeductionArea-${spaceId}`).textContent = Math.round(total);
+            document.getElementById(`totalDeductionArea-${space.id}`).textContent = Math.round(total);
         }
 
         function addAccessoryCalculator() {
@@ -449,8 +436,8 @@
             accessoryDiv.id = accessory.id;
             accessoryDiv.innerHTML = `
                 <h3>
-                    <span class="accessory-title" id="title-${accessory.id}">收邊配件</span>
-                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAccessoryCalculator('${accessory.id}')">刪除</button>
+                    <span class="accessory-title" id="title-${accessory.id}">新配件</span>
+                    <button type="button" class="btn btn-text-danger" onclick="removeAccessoryCalculator('${accessory.id}')">刪除</button>
                 </h3>
                 <div class="accessory-input-group"><label>區域/品項</label><input type="text" id="desc-${accessory.id}" value=""></div>
                 <div class="accessory-input-group"><label>長度 (cm)</label><input type="number" id="length-${accessory.id}" step="1"></div>
@@ -459,7 +446,7 @@
             `;
             accessoriesContainer.appendChild(accessoryDiv);
             document.getElementById(`desc-${accessory.id}`).addEventListener('input', (e) => {
-                const titleText = e.target.value.trim() || '收邊配件';
+                const titleText = e.target.value.trim() || '新配件';
                 document.getElementById(`title-${accessory.id}`).textContent = titleText;
                 const acc = accessories.find(a => a.id === accessory.id);
                 if(acc) acc.description = e.target.value.trim();
@@ -501,7 +488,6 @@
             document.getElementById('totalNetArea').textContent = `${Math.round(totalNetAreaCmSq)} cm²`;
             document.getElementById('finalTotalPings').textContent = `${totalPings.toFixed(2)} 坪`;
             document.getElementById('totalSummary').style.display = 'block';
-            showStatusMessage('計算完成！請查看下方總結算', 'success');
             return true;
         }
 
@@ -534,7 +520,7 @@
                     keyPassword: document.getElementById('keyPassword').value,
                 },
                 spaces: spaces.map(space => ({
-                    description: document.getElementById(`desc-${space.id}`).value,
+                    description: document.getElementById(`desc-${space.id}`).value || '未命名空間',
                     productUsed: document.getElementById(`product-${space.id}`).value,
                     remark: document.getElementById(`remark-${space.id}`).value,
                     constructionMethod: document.getElementById(`constructionMethod-${space.id}`).value,
@@ -603,7 +589,7 @@
                 const project = projectNameInput.value.trim();
                 let newTitle = '';
                 if (company && project) { newTitle = `${company} - ${project}`; }
-                else if (company) { newTitle = `${company} - 計算中...`; }
+                else if (company) { newTitle = `${company}`; }
                 else if (project) { newTitle = `${project}`; }
                 
                 if (newTitle) {
