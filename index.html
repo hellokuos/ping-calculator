@@ -57,7 +57,7 @@
         .form-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 16px;
+            gap: 12px; /* 縮小一點間距更緊湊 */
         }
         .form-group {
             display: flex;
@@ -242,8 +242,8 @@
 
         @media (min-width: 768px) {
             .form-grid { grid-template-columns: repeat(2, 1fr); }
-            /* 保持配件區塊在電腦版也是堆疊的 */
-            .form-grid.accessory-grid .form-group {
+            /* ★★★ 修正電腦版跑版問題 ★★★ */
+            .form-grid.single-column .form-group {
                  grid-column: 1 / -1;
             }
         }
@@ -438,7 +438,7 @@
                 
                 <div class="deduction-section-inner" style="margin-top: 24px;">
                     <h4>扣除面積：</h4>
-                    <div class="form-grid">
+                    <div class="form-grid single-column">
                         <input type="text" id="deductionItem-${space.id}" placeholder="書櫃、衣櫃、系統櫃、流理台、柱子...">
                         <input type="number" id="deductionLength-${space.id}" placeholder="長 (cm)">
                         <input type="number" id="deductionWidth-${space.id}" placeholder="寬 (cm)">
@@ -478,7 +478,7 @@
         function addDeductionItemForSpace(spaceId) {
             const itemInput = document.getElementById(`deductionItem-${spaceId}`);
             const lengthInput = document.getElementById(`deductionLength-${spaceId}`);
-            const widthInput = document.getElementById(`deductionWidth-${spaceId}`);
+            const widthInput = document.getElementById(`deductionWidth-${space.id}`);
             const item = itemInput.value.trim();
             const length = parseFloat(lengthInput.value) || 0;
             const width = parseFloat(widthInput.value) || 0;
@@ -537,13 +537,12 @@
             accessoryDiv.classList.add('form-section');
             accessoryDiv.id = accessory.id;
             
-            // ★★★ 這就是修改過的地方 ★★★
             accessoryDiv.innerHTML = `
                 <h3 class="section-header">
                     <span class="title" id="title-${accessory.id}">新配件</span>
                     <button type="button" class="btn btn-danger-solid btn-small" onclick="removeAccessoryCalculator('${accessory.id}')">刪除配件</button>
                 </h3>
-                <div class="form-grid accessory-grid">
+                <div class="form-grid single-column">
                     <input type="text" id="desc-${accessory.id}" placeholder="大門區隔條、主臥起步條...">
                     <input type="number" id="length-${accessory.id}" placeholder="長度 (cm)" step="1">
                     <input type="number" id="width-${accessory.id}" placeholder="寬度 (cm)" step="1">
@@ -644,8 +643,7 @@
                     totalPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
                     deductionItems: space.deductionItems
                 })),
-                // ★★★ 這就是修改過的地方 ★★★
-                accessories: accessories.filter(acc => acc.description).map(acc => ({
+                accessories: accessories.filter(acc => document.getElementById(`desc-${acc.id}`).value.trim()).map(acc => ({
                     description: document.getElementById(`desc-${acc.id}`).value,
                     length: document.getElementById(`length-${acc.id}`).value,
                     width: document.getElementById(`width-${acc.id}`).value,
