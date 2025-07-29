@@ -165,7 +165,6 @@
         .space-result p { margin: 0 0 8px 0; }
         .space-result .bold-result { font-size: 1.2em; color: var(--text-primary); font-weight: 600; text-align: center; margin-top: 12px; }
         
-        /* ★★★ 這就是修改過的地方 ★★★ */
         .space-result .final-pings-result {
             color: var(--primary-color);
             font-weight: 700;
@@ -229,9 +228,9 @@
             text-align: center;
             overflow: hidden;
         }
-        .custom-modal-content { padding: 20px; }
+        .custom-modal-content { padding: 20px 20px 0 20px; }
         .custom-modal-title { font-size: 1.1em; font-weight: 600; margin: 0 0 4px 0; }
-        .custom-modal-text { font-size: 0.9em; margin: 0; }
+        .custom-modal-text { font-size: 0.9em; margin: 0; padding-bottom: 20px;}
         .custom-modal-buttons {
             display: flex;
             width: 100%;
@@ -248,6 +247,15 @@
         .custom-modal-button:first-child { border-right: 1px solid rgba(60, 60, 67, 0.29); }
         .custom-modal-button.confirm { color: var(--primary-color); font-weight: 600; }
         .custom-modal-button.cancel { color: var(--primary-color); }
+        
+        /* ★★★ 這就是修改過的地方 ★★★ */
+        .custom-modal-buttons.single-button .cancel {
+            display: none;
+        }
+        .custom-modal-buttons.single-button .confirm {
+            border-right: none;
+            font-weight: 400;
+        }
 
         @media (min-width: 768px) {
             .form-grid { grid-template-columns: repeat(2, 1fr); }
@@ -372,20 +380,48 @@
         const modalText = document.getElementById('modal-text');
         const confirmBtn = document.getElementById('modal-confirm-btn');
         const cancelBtn = document.getElementById('modal-cancel-btn');
+        const modalButtons = modal.querySelector('.custom-modal-buttons');
+
+        function showCustomAlert(title, text = '') {
+            modalTitle.textContent = title;
+            modalText.textContent = text;
+            if (!text) {
+                modalTitle.style.paddingBottom = '20px';
+            } else {
+                modalTitle.style.paddingBottom = '4px';
+            }
+            
+            modalButtons.classList.add('single-button');
+            confirmBtn.textContent = '好的';
+            cancelBtn.disabled = true;
+
+            const okHandler = () => {
+                modal.style.display = 'none';
+                modalButtons.classList.remove('single-button');
+                cancelBtn.disabled = false;
+            };
+            
+            confirmBtn.addEventListener('click', okHandler, { once: true });
+            modal.style.display = 'flex';
+        }
 
         function showCustomConfirm(title, text, onConfirm) {
             modalTitle.textContent = title;
             modalText.textContent = text;
+            modalTitle.style.paddingBottom = '4px';
+
+            modalButtons.classList.remove('single-button');
+            confirmBtn.textContent = '好的';
+            cancelBtn.textContent = '取消';
+            cancelBtn.disabled = false;
             
             const confirmHandler = () => {
                 modal.style.display = 'none';
                 onConfirm();
-                confirmBtn.removeEventListener('click', confirmHandler);
             };
 
             const cancelHandler = () => {
                 modal.style.display = 'none';
-                confirmBtn.removeEventListener('click', confirmHandler);
             };
             
             confirmBtn.addEventListener('click', confirmHandler, { once: true });
@@ -681,10 +717,10 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify(data),
                 });
-                showStatusMessage('✅ PDF已發送生成請求！請稍後至雲端硬碟查看。', 'success');
+                showCustomAlert('PDF 上傳雲端完成');
             } catch (error) {
                 console.error('PDF Generation Error:', error);
-                showStatusMessage(`❌ PDF生成失敗：${error.message}`, 'error');
+                showCustomAlert('PDF 生成失敗', `錯誤訊息：${error.message}`);
             } finally {
                 pdfBtn.disabled = false;
                 btnText.style.display = 'inline';
