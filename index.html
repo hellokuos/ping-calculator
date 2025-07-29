@@ -156,11 +156,12 @@
             font-size: 0.9em;
             flex-shrink: 0;
         }
-        /* ★★★ 新增：用於標題列的小按鈕樣式 ★★★ */
+        
+        /* ★★★ 這就是修改過的地方 ★★★ */
         .btn.btn-small {
             width: auto;
-            padding: 8px 14px;
-            font-size: 0.9em;
+            padding: 6px 10px; /* 從 8px 14px 縮小 */
+            font-size: 0.8em;  /* 從 0.9em 縮小 */
             flex-shrink: 0;
         }
 
@@ -428,7 +429,6 @@
             const spaceDiv = document.createElement('div');
             spaceDiv.classList.add('form-section');
             spaceDiv.id = space.id;
-            // ★★★ 更新此處的 HTML，使用新的按鈕樣式和標籤 ★★★
             spaceDiv.innerHTML = `
                 <h3 class="section-header">
                     <span class="title" id="title-${space.id}">新空間</span>
@@ -471,7 +471,6 @@
             `;
             spacesContainer.appendChild(spaceDiv);
             
-            // ★★★ 確保動態標題功能正常運作 ★★★
             document.getElementById(`desc-${space.id}`).addEventListener('input', (e) => {
                 document.getElementById(`title-${space.id}`).textContent = e.target.value.trim() || `新空間`;
                 const currentSpace = spaces.find(s => s.id === space.id);
@@ -547,7 +546,6 @@
             const accessoryDiv = document.createElement('div');
             accessoryDiv.classList.add('form-section');
             accessoryDiv.id = accessory.id;
-            // ★★★ 更新此處的 HTML，使用新的按鈕樣式和標籤 ★★★
             accessoryDiv.innerHTML = `
                 <h3 class="section-header">
                     <span class="title" id="title-${accessory.id}">新配件</span>
@@ -562,7 +560,6 @@
             `;
             accessoriesContainer.appendChild(accessoryDiv);
             
-            // ★★★ 確保動態標題功能正常運作 ★★★
             document.getElementById(`desc-${accessory.id}`).addEventListener('input', (e) => {
                 const titleText = e.target.value.trim() || '新配件';
                 document.getElementById(`title-${accessory.id}`).textContent = titleText;
