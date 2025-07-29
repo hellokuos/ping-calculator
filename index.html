@@ -91,11 +91,17 @@
         
         .section-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             width: 100%;
+            gap: 16px; /* 使用 gap 替代 justify-content 來創造間距 */
         }
-        .section-header .title { flex-grow: 1; text-align: left; }
+        .section-header .title {
+            flex-grow: 1; /* 讓標題佔據多數空間，將按鈕推到右邊 */
+            text-align: left;
+            white-space: nowrap;      /* ★★★ 新增：防止標題文字換行 ★★★ */
+            overflow: hidden;         /* ★★★ 新增：隱藏超出的文字 ★★★ */
+            text-overflow: ellipsis;  /* ★★★ 新增：如果文字太長，顯示 ... ★★★ */
+        }
         
         .deduction-form {
             display: grid;
@@ -143,7 +149,13 @@
         .btn:disabled { background-color: #AEAEB2; cursor: not-allowed; }
         .btn-primary { background-color: var(--primary-color); color: white; }
         .btn-danger-solid { background-color: var(--danger-color); color: white; }
-        .btn-text-danger { background: none; color: var(--danger-color); padding: 4px 8px; font-size: 0.9em; flex-shrink: 0; }
+        .btn-text-danger {
+            background: none;
+            color: var(--danger-color);
+            padding: 4px 8px;
+            font-size: 0.9em;
+            flex-shrink: 0; /* ★★★ 新增：確保刪除按鈕本身不會被壓縮 ★★★ */
+        }
 
         .space-result {
             margin-top: 24px; padding: 16px; background-color: #F2F2F7;
@@ -260,24 +272,17 @@
             }
 
             /* --- 2. 統一輸入框樣式 (核心修正) --- */
-            /* 
-            * 使用一個更通用的選擇器來確保所有在 .form-grid 內的 input 樣式一致。
-            * 這是解決日期輸入框寬度問題的關鍵。
-            */
             .form-grid input[type="text"],
             .form-grid input[type="date"],
             .form-grid input[type="number"] {
                 font-size: 16px;      /* 避免 iOS 輸入時自動縮放頁面 */
                 min-height: 44px;     /* 設定最小觸控高度，方便點擊 */
                 padding: 11px 12px;   /* 微調 padding 以配合新的 min-height */
-                -webkit-appearance: none; /* 重置部分瀏覽器原生樣式，但通常對 date input 影響不大 */
+                -webkit-appearance: none; 
                 appearance: none;
             }
             
-            /* 為了讓 date input 仍然可以點擊出現日曆，我們需要確保它看起來和其他輸入框一樣 */
             input[type="date"] {
-                /* 在 iOS 上，即使重置 appearance，日期選擇功能通常仍可用。
-                這確保了樣式統一，同時保留了核心功能。 */
                 background-color: #F8F8F8; /* 確保背景色一致 */
             }
 
