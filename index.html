@@ -242,6 +242,10 @@
 
         @media (min-width: 768px) {
             .form-grid { grid-template-columns: repeat(2, 1fr); }
+            /* 保持配件區塊在電腦版也是堆疊的 */
+            .form-grid.accessory-grid .form-group {
+                 grid-column: 1 / -1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -539,10 +543,11 @@
                     <span class="title" id="title-${accessory.id}">新配件</span>
                     <button type="button" class="btn btn-danger-solid btn-small" onclick="removeAccessoryCalculator('${accessory.id}')">刪除配件</button>
                 </h3>
-                <div class="form-grid">
-                    <input type="text" id="desc-${accessory.id}" placeholder="區域/品項 (例如：大門區隔條、起步條...)">
+                <div class="form-grid accessory-grid">
+                    <input type="text" id="desc-${accessory.id}" placeholder="大門區隔條、主臥起步條...">
                     <input type="number" id="length-${accessory.id}" placeholder="長度 (cm)" step="1">
-                    <input type="number" id="width-${accessory.id}" placeholder="寬度/數量" step="1">
+                    <input type="number" id="width-${accessory.id}" placeholder="寬度 (cm)" step="1">
+                    <input type="number" id="quantity-${accessory.id}" placeholder="數量" step="1">
                     <input type="text" id="notes-${accessory.id}" placeholder="備註">
                 </div>
             `;
@@ -639,10 +644,12 @@
                     totalPings: parseFloat(document.getElementById(`totalPingsResult-${space.id}`).textContent) || 0,
                     deductionItems: space.deductionItems
                 })),
+                // ★★★ 這就是修改過的地方 ★★★
                 accessories: accessories.filter(acc => acc.description).map(acc => ({
-                    description: acc.description,
+                    description: document.getElementById(`desc-${acc.id}`).value,
                     length: document.getElementById(`length-${acc.id}`).value,
                     width: document.getElementById(`width-${acc.id}`).value,
+                    quantity: document.getElementById(`quantity-${acc.id}`).value,
                     notes: document.getElementById(`notes-${acc.id}`).value
                 })),
                 summary: {
