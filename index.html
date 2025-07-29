@@ -30,10 +30,8 @@
             padding: 24px 12px;
         }
         .container {
-            background-color: var(--component-background);
-            padding: 24px;
-            border-radius: var(--border-radius-lg);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background-color: transparent;
+            padding: 0;
             width: 100%;
             max-width: 720px;
             text-align: center;
@@ -42,16 +40,16 @@
             margin-top: 0;
             line-height: 1.3;
             font-weight: 600;
+            text-align: left;
         }
-        h1 { margin-bottom: 24px; font-size: 2em; }
-        h2 { margin-bottom: 24px; font-size: 1.6em; border-bottom: 1px solid var(--separator-color); padding-bottom: 12px; }
+        h1 { margin-bottom: 24px; font-size: 2em; text-align: center; }
+        h2 { margin-bottom: 16px; font-size: 1.6em; padding: 0 12px; }
         h3 { margin-bottom: 20px; font-size: 1.3em; }
         h4 { margin-bottom: 16px; font-size: 1.1em; color: var(--primary-color); font-weight: 500; }
 
         .form-section {
             margin-bottom: 24px;
             padding: 20px;
-            border: 1px solid var(--separator-color);
             border-radius: var(--border-radius-lg);
             background-color: var(--component-background);
             text-align: left;
@@ -144,8 +142,7 @@
         .btn:hover { filter: brightness(1.1); }
         .btn:disabled { background-color: #AEAEB2; cursor: not-allowed; }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary.full-width { max-width: 100%; }
-        .btn-danger-solid { background-color: var(--danger-color); color: white; max-width: 400px; }
+        .btn-danger-solid { background-color: var(--danger-color); color: white; }
         .btn-text-danger { background: none; color: var(--danger-color); padding: 4px 8px; font-size: 0.9em; flex-shrink: 0; }
 
         .space-result {
@@ -161,8 +158,7 @@
         .status-info { background-color: #E5F6FF; color: #005A9E; }
         
         .total-summary {
-            margin: 24px 0; padding: 24px; border: 1px solid var(--separator-color);
-            border-radius: var(--border-radius-lg); background: var(--component-background);
+            margin: 24px 0; padding: 24px; border-radius: var(--border-radius-lg); background: var(--component-background);
         }
         .summary-content { padding: 0; }
         .summary-row {
@@ -192,6 +188,45 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .custom-modal {
+            background-color: rgba(242, 242, 247, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 14px;
+            width: 270px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .custom-modal-content { padding: 20px; }
+        .custom-modal-title { font-size: 1.1em; font-weight: 600; margin: 0 0 4px 0; }
+        .custom-modal-text { font-size: 0.9em; margin: 0; }
+        .custom-modal-buttons {
+            display: flex;
+            width: 100%;
+            border-top: 1px solid rgba(60, 60, 67, 0.29);
+        }
+        .custom-modal-button {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05em;
+        }
+        .custom-modal-button:first-child { border-right: 1px solid rgba(60, 60, 67, 0.29); }
+        .custom-modal-button.confirm { color: var(--primary-color); font-weight: 600; }
+        .custom-modal-button.cancel { color: var(--primary-color); }
+
         @media (min-width: 768px) {
             .form-grid { grid-template-columns: repeat(2, 1fr); }
             .deduction-form { grid-template-columns: 1fr 1fr 1fr auto; align-items: flex-end; }
@@ -212,7 +247,7 @@
                 <div class="form-group"><label for="housingType">房屋類型</label><input type="text" id="housingType" placeholder="新成屋、中古屋、毛胚屋"></div>
                 <div class="form-group"><label for="floorCondition">目前地坪</label><input type="text" id="floorCondition" placeholder="毛胚、泥作、拋光石英磚、磨石子地 ..."></div>
                 <div class="form-group"><label for="parkingSpace">停車位</label><input type="text" id="parkingSpace" placeholder="B2坡道平面"></div>
-                <div class="form-group"><label for="keyPassword">鑰匙/密碼</label><input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234"></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label for="keyPassword">鑰匙/密碼</label><input type="text" id="keyPassword" placeholder="門口電子鎖密碼 1234"></div>
             </div>
         </div>
 
@@ -227,9 +262,9 @@
         <hr class="section-divider">
 
         <div class="button-container">
-            <button type="button" class="btn btn-primary" onclick="calculateAllSpaces()">🧮 計算全部坪數</button>
-            <button type="button" id="pdf-btn" class="btn btn-danger-solid" onclick="generateAndUploadPDF()">
-                <span id="pdf-btn-text">📄 生成PDF並上傳雲端</span>
+            <button type="button" class="btn btn-primary" onclick="confirmCalculate()">計算全部坪數</button>
+            <button type="button" id="pdf-btn" class="btn btn-danger-solid" onclick="confirmGeneratePDF()">
+                <span id="pdf-btn-text">生成PDF並上傳雲端</span>
                 <span id="pdf-spinner" class="spinner" style="display: none;"></span>
             </button>
         </div>
@@ -248,6 +283,20 @@
         <div id="statusMessage" class="status-message" style="display: none;"></div>
     </div>
 
+    <!-- Custom Modal -->
+    <div id="custom-confirm-modal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <div class="custom-modal-content">
+                <p id="modal-title" class="custom-modal-title"></p>
+                <p id="modal-text" class="custom-modal-text"></p>
+            </div>
+            <div class="custom-modal-buttons">
+                <button id="modal-cancel-btn" class="custom-modal-button cancel">取消</button>
+                <button id="modal-confirm-btn" class="custom-modal-button confirm">好的</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby1k8YMOaOc7q9Wa3hPOUM9eoVtp2o0mRwJTRPY5BmQWfgPfd9oshIrzCSoD6nq4zg6/exec';
         const PING_CONVERSION_FACTOR = 0.3025;
@@ -256,6 +305,43 @@
         let spaceCounter = 0;
         let accessoryCounter = 0;
 
+        // --- Modal Logic ---
+        const modal = document.getElementById('custom-confirm-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+
+        function showCustomConfirm(title, text, onConfirm) {
+            modalTitle.textContent = title;
+            modalText.textContent = text;
+            
+            const confirmHandler = () => {
+                modal.style.display = 'none';
+                onConfirm();
+                confirmBtn.removeEventListener('click', confirmHandler);
+            };
+
+            const cancelHandler = () => {
+                modal.style.display = 'none';
+                confirmBtn.removeEventListener('click', confirmHandler);
+            };
+            
+            confirmBtn.addEventListener('click', confirmHandler, { once: true });
+            cancelBtn.addEventListener('click', cancelHandler, { once: true });
+
+            modal.style.display = 'flex';
+        }
+
+        function confirmCalculate() {
+            showCustomConfirm('確認計算', '您確定要計算所有空間的坪數嗎？', calculateAllSpaces);
+        }
+
+        function confirmGeneratePDF() {
+            showCustomConfirm('確認生成PDF', '這會將目前的資料上傳到雲端，確定要繼續嗎？', generateAndUploadPDF);
+        }
+
+        // --- Core Logic ---
         function showStatusMessage(message, type = 'info') {
             const statusMessage = document.getElementById('statusMessage');
             statusMessage.textContent = message;
@@ -452,6 +538,7 @@
             document.getElementById('totalNetArea').textContent = `${Math.round(totalNetAreaCmSq)} cm²`;
             document.getElementById('finalTotalPings').textContent = `${totalPings.toFixed(2)} 坪`;
             document.getElementById('totalSummary').style.display = 'block';
+            showStatusMessage('計算完成！', 'success');
             return true;
         }
 
